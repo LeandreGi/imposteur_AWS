@@ -14,6 +14,7 @@ Options : Points pour les joueurs (Si imposteur découvert, si on a bien voté..
 
 Site responsive ou pas ?
 
+------------
 Objectif pour le 12/02 :
 - Full docu sur react.
 - Coder page de connexion.
@@ -22,3 +23,4 @@ Rôles :
 - Responsable : Léandre (Organise)
 - codeur : Erkhem + Mohammed (Tu codes la page de connexion)
 - chercheur.se : Laetitia (Comment faire un lobby pour une partie ? Chercher des trucs pertinents dans la docu.)
+------------
