@@ -1,6 +1,17 @@
 body {
     background-color: #FAEBD7;
-    padding: 5ch;
     display: flex;
     justify-content: center;
+};
+
+.connection_page {
+    text-align: center;
+    display : flex;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.5em;
+    color: #8B4513;
+    margin-bottom: 1em;
 };
