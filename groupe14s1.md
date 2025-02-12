@@ -1,5 +1,5 @@
-Laetitia Tiberghien\
-Erkhem \
+Laetitia TIBERGHIEN\
+Erkhem HATANBATAAR VAN\
 Léandre GIAMMONA
 
 # Décision du projet
