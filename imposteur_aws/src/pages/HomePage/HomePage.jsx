@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import './HomePage.css';
 
 function HomePage({ onNavigate }) {
   const [username, setUsername] = useState('');

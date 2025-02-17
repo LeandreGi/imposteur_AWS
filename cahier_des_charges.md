@@ -24,3 +24,24 @@ Rôles :
 - codeur : Erkhem + Mohammed (Tu codes la page de connexion)
 - chercheur.se : Laetitia (Comment faire un lobby pour une partie ? Chercher des trucs pertinents dans la docu.)
 ------------
+Objectif pour le 19/02 :
+Rôles :
+Codeuse : Laetitia
+chercheur : Léandre
+Erkhem : Responsable
+
+Durant la séance :
+- Code de la page de connexion/règles
+
+Pour la semaine :
+- Bonne idée selon le prof de faire les WebSockets donc approfondir le truc.
+- Finir la première page.
+- Faire la page des résultats
+- Commencer page de création d'une partie 
+  - Implé les paramètres
+  - répartition des rôles
+  - Créer le code de la partie
+  - régler le temps de reflexion à chaque tour.
+  - Lancer la partie
+
+------------

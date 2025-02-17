@@ -1,0 +1,16 @@
+.connection_page {
+  text-align: center;
+  display: flex;
+}
+
+.regles_box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 2em;
+}
+
+.regles_txt{
+    
+}

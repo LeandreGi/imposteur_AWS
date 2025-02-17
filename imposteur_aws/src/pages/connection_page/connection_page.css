@@ -1,12 +1,10 @@
 body {
     background-color: #FAEBD7;
-    display: flex;
-    justify-content: center;
 };
 
 .connection_page {
-    text-align: center;
-    display : flex;
+    justify-content: center;
+    align-items: center;
 }
 
 h1 {
@@ -15,3 +13,39 @@ h1 {
     color: #8B4513;
     margin-bottom: 1em;
 };
+
+.page_wrapper {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    justify-content: space-between;
+    align-items: stretch; 
+    gap: 20px;
+    padding: 20px;
+    height: 100vh; 
+    min-height: 100vh; 
+  }
+  
+.game_starter {
+    grid-column: 1;
+}
+
+.regles_box{
+    grid-column: 3;
+    border: 1px solid black;
+} 
+
+.roles_box {
+    grid-column: 2;
+  }
+  
+  
+  .regles_txt{
+    text-align: justify;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .roles_txt{
+    text-align: justify;
+    font-family: 'Montserrat', sans-serif;
+  }
