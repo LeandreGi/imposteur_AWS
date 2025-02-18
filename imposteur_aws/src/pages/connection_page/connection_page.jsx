@@ -1,4 +1,5 @@
 import './connection_page0.css';
+import socket from '../socket';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -61,14 +62,19 @@ function ConnectionPage() {
     const navigate = useNavigate();
 
     const handleCreateGame = () => {
-
-        // ajouter la logique de création de partie
-
         if (username.trim() === '') {
             setError('Veuillez entrer un pseudo.');
             return;
         }
         setError('');
+
+        const generatedLobbyId = '1234';
+
+        socket.emit('joinLobby', { 
+            pseudo: username, 
+            lobbyId: generatedLobbyId 
+        });
+
         navigate('/lobby');
     };
 
