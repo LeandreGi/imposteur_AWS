@@ -1,5 +1,6 @@
 import './connection_page0.css';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function RolesCarousel() {
     const roles = [ 
@@ -57,22 +58,49 @@ function ConnectionPage() {
     
     const [username, setUsername] = useState('');
     const [error, setError] = useState('');
+    const navigate = useNavigate();
+
+    const handleCreateGame = () => {
+
+        // ajouter la logique de création de partie
+
+        if (username.trim() === '') {
+            setError('Veuillez entrer un pseudo.');
+            return;
+        }
+        setError('');
+        navigate('/lobby');
+    };
+
+    const handleJoinGame = () => {
+
+        // logique pour rejoindre une partie
+
+        if (username.trim() === '') {
+            setError('Veuillez entrer un pseudo.');
+            return;
+        }
+        setError('');
+        navigate('/lobby');
+    };
 
     return (
         <div className="connection_page">
             <div className='page_wrapper'>
                 <div className='game_starter'>
                     <h1>Le titre de la page</h1>       
-                    <button onClick={GameButton}>Créer une partie !</button>
-                    <button onClick={GameButton}>Rejoindre une partie !</button>
+                    <button onClick={handleCreateGame}>Créer une partie !</button>
+                    <button onClick={handleJoinGame}>Rejoindre une partie !</button>
+                    
                     <div>
-                    <label htmlFor="username">
-                        Votre pseudo 
-                    </label>
-                    <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Entrez votre pseudo"/>
-                    {error && <p>{error}</p>}
+                        <label htmlFor="username">
+                            Votre pseudo 
+                        </label>
+                        <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Entrez votre pseudo"/>
+                        {error && <p>{error}</p>}
+                    </div>
                 </div>
-                </div>
+
                 <div className='regles_box'>
                     <h2>Règles du jeu</h2>
                     <div className='regles_txt'>
@@ -87,9 +115,7 @@ function ConnectionPage() {
                 <div className="roles_box">
                     <RolesCarousel />
                 </div>
-            
             </div>
-            
         </div>
     );
 };
