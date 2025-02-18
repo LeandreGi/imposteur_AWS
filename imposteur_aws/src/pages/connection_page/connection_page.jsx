@@ -1,5 +1,6 @@
-import './connection_page0.css';
+
 import socket from '../socket';
+import './connection_page1.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -94,7 +95,7 @@ function ConnectionPage() {
         <div className="connection_page">
             <div className='page_wrapper'>
                 <div className='game_starter'>
-                    <h1>Le titre de la page</h1>       
+                    <h1>IMPOSTEUR</h1>       
                     <button onClick={handleCreateGame}>Créer une partie !</button>
                     <button onClick={handleJoinGame}>Rejoindre une partie !</button>
                     
