@@ -1,0 +1,78 @@
+.connection_page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f4f4;
+    padding: 20px;
+}
+
+.page_wrapper {
+    display: flex;
+    flex-direction: row; /* Affichage en colonnes */
+    justify-content: space-around;
+    align-items: flex-start;
+    max-width: 1200px; /* Ajuste selon la taille désirée */
+    width: 100%;
+    gap: 20px;
+}
+
+/* Style pour chaque colonne */
+.game_starter, .regles_box, .roles_box {
+    flex: 1; /* Permet à chaque section de prendre un espace égal */
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    min-height: 400px; /* Ajuste la hauteur minimale */
+}
+
+.regles_box {
+    order: 1; /* Change l'ordre d'affichage */
+}
+
+.game_starter {
+    order: 2;
+}
+
+.roles_box {
+    order: 3;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    .page_wrapper {
+        flex-direction: column; /* Passe en mode colonne pour les petits écrans */
+        align-items: center;
+    }
+
+    .game_starter, .regles_box, .roles_box {
+        width: 90%;
+    }
+}
+
+/* Boutons */
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Champs de texte */
+input {
+    width: 80%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
