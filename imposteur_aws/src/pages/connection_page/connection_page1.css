@@ -9,27 +9,27 @@
 
 .page_wrapper {
     display: flex;
-    flex-direction: row; /* Affichage en colonnes */
+    flex-direction: row;
     justify-content: space-around;
     align-items: flex-start;
-    max-width: 1200px; /* Ajuste selon la taille désirée */
+    max-width: 1200px;
     width: 100%;
     gap: 20px;
 }
 
 /* Style pour chaque colonne */
 .game_starter, .regles_box, .roles_box {
-    flex: 1; /* Permet à chaque section de prendre un espace égal */
+    flex: 1;
     background: white;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
-    min-height: 400px; /* Ajuste la hauteur minimale */
+    min-height: 400px;
 }
 
 .regles_box {
-    order: 1; /* Change l'ordre d'affichage */
+    order: 1;
 }
 
 .game_starter {
@@ -40,10 +40,9 @@
     order: 3;
 }
 
-/* Responsive Design */
 @media (max-width: 900px) {
     .page_wrapper {
-        flex-direction: column; /* Passe en mode colonne pour les petits écrans */
+        flex-direction: column;
         align-items: center;
     }
 
@@ -52,7 +51,6 @@
     }
 }
 
-/* Boutons */
 button {
     background-color: #4CAF50;
     color: white;
@@ -68,7 +66,6 @@ button:hover {
     background-color: #45a049;
 }
 
-/* Champs de texte */
 input {
     width: 80%;
     padding: 10px;

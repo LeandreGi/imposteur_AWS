@@ -124,6 +124,10 @@ Pour ceci on fait :
 Implémentation des croquis des pages pour le projet.
 Implémentation des début de pages game_page, lobby_page et score_page en plus de connection_page qui existait déjà pour pouvoir implémenter les routes entre les pages.
 
+### Ajout de style et de fonctionnalités sur certaines pages
+
+Il a été ajouté sur la page de connexion du style et des fonctionnalité, nous avons opté pour un rendu épuré pour l'application (pour le moment du moins) et certaines fonctionnalités, comme des routes vers d'autres pages (voir ci-dessous React Router), l'input pour le pseudo de la partie (avec un message d'alerte si on essaie de créer ou de rejoindre une partie sans avoir créé de pseudo) ,nous pouvons désormais consulter les différents rôles du jeu via des boutons qui défilent, et également l'implémentation d'un début de Header qui servira sur toutes les pages.
+
 ### React et les Routes
 
 Les Routes dans React permettent de changer de page d'une manière légèrement différente de l'html.\
