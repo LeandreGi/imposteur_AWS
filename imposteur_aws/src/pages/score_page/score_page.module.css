@@ -1,0 +1,43 @@
+.page_wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; 
+    padding: 20px;
+    background-color: #dedcdb; 
+  }
+  
+  .score_card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+  }
+  
+  .score_list {
+    margin-top: 20px;
+  }
+  
+  .score_item {
+    background-color: #f8f8f8;
+    border-radius: 5px;
+    margin: 10px 0;
+    padding: 10px;
+  }
+
+.button_style {
+  background-color: #28a745; 
+  color: white;            
+  padding: 10px 20px;      
+  border: none;            
+  border-radius: 5px;      
+  cursor: pointer;         
+  transition: background-color 0.3s ease; 
+}
+
+.button_style:hover {
+  background-color: #135d08;
+}
