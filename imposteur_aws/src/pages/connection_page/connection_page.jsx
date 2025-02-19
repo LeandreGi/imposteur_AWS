@@ -1,6 +1,6 @@
 
 import socket from '../socket';
-import './connection_page1.css';
+import './connection_page.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

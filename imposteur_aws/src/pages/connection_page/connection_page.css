@@ -1,51 +1,75 @@
-body {
-    background-color: #FAEBD7;
-};
-
 .connection_page {
+    display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 100vh;
+    background-color: #f4f4f4;
+    padding: 20px;
 }
-
-h1 {
-    text-align: center;
-    font-size: 2.5em;
-    color: #8B4513;
-    margin-bottom: 1em;
-};
 
 .page_wrapper {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    justify-content: space-between;
-    align-items: stretch; 
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: flex-start;
+    max-width: 1200px;
+    width: 100%;
     gap: 20px;
-    padding: 20px;
-    height: 100vh; 
-    min-height: 100vh; 
-  }
-  
-.game_starter {
-    grid-column: 1;
 }
 
-.regles_box{
-    grid-column: 3;
-    border: 1px solid black;
-} 
+/* Style pour chaque colonne */
+.game_starter, .regles_box, .roles_box {
+    flex: 1;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    min-height: 400px;
+}
+
+.regles_box {
+    order: 1;
+}
+
+.game_starter {
+    order: 2;
+}
 
 .roles_box {
-    grid-column: 2;
-  }
-  
-  
-  .regles_txt{
-    text-align: justify;
-    font-family: 'Montserrat', sans-serif;
-  }
+    order: 3;
+}
 
-  .roles_txt{
-    text-align: justify;
-    font-family: 'Montserrat', sans-serif;
-  }
+@media (max-width: 900px) {
+    .page_wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .game_starter, .regles_box, .roles_box {
+        width: 90%;
+    }
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+input {
+    width: 80%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
