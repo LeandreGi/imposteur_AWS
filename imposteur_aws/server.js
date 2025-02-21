@@ -4,7 +4,13 @@ const socketIo = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+    cors: {
+        origin: '*', // ça ça autorise tout le monde, donc tous les ports peuvent se connecter au backend, donc faudra régler ça plus tard
+        methods: ['GET', 'POST']
+    }
+});
+
 
 let lobbies = {}; 
 
@@ -69,6 +75,7 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => { 
         // Retirer le joueur du lobbies où il etait
+        console.log('Un utilisateur déconnecté : ', socket.id);
         for (const [id, lobby] of Object.entries(lobbies)) {
             lobby.players = lobby.players.filter(p => p.id !== socket.id);
             // si c'était l'hote on transitione le role vers une autre personne 
@@ -80,6 +87,6 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(3000, () => {
+server.listen(4000, () => {
     console.log('Serveur démarré sur le port 3000');
 });
