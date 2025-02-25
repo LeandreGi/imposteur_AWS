@@ -16,6 +16,33 @@ let lobbies = {};
 
 io.on('connection', (socket) => {
     console.log('Un utilisateur connecté : ', socket.id);
+    
+    socket.on('createLobby', (pseudo, lobbyId) => {
+        // On crée le lobby si jamais il n'existe pas.
+        if (!lobbies[lobbyId]) {
+            lobbies[lobbyId] = {
+                players: [],
+                hostId: socket.id,
+                gameStarted: false,
+                gameConfig: {},
+            };
+        }
+
+        // Ajouter du joueur au lobby
+        lobbies[lobbyId].players.push({
+            id: socket.id,
+            pseudo,
+        });
+
+        // Informer le client qu'on a créé le lobby
+        socket.join(lobbyId);
+        io.to(socket.id).emit('lobbyCreated', {
+            lobbyId,
+            players: lobbies[lobbyId].players,
+            hostId: lobbies[lobbyId].hostId,
+            gameStarted: lobbies[lobbyId].gameStarted,
+        });
+    });
 
     socket.on('joinLobby', ({pseudo, lobbyId}) => {
         // Vérifier si le lobby existe
@@ -36,6 +63,7 @@ io.on('connection', (socket) => {
 
         //Envoyer au nouveau client les infos completes 
         socket.join(lobbyId);
+
         io.to(socket.id).emit('lobbyData', {
             players: lobbies[lobbyId].players,
             hostId: lobbies[lobbyId].hostId,
@@ -87,6 +115,7 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(4000, () => {
-    console.log('Serveur démarré sur le port 3000');
+const PORT = 4000;
+server.listen(PORT, () => {
+    console.log('Serveur démarré sur le port', PORT);
 });

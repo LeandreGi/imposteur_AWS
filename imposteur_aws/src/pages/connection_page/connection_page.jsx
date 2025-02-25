@@ -1,4 +1,3 @@
-
 import socket from '../socket';
 import './connection_page.css';
 import { useState } from 'react';
@@ -58,9 +57,12 @@ function ConnectionPage() {
         alert('Le jeu va commencer !');
     };
     
+    // État pour le pseudo
     const [username, setUsername] = useState('');
+    // État pour afficher d’éventuelles erreurs
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const [lobbyCode, setLobbyCode] = useState('');
 
     const handleCreateGame = () => {
         if (username.trim() === '') {
@@ -69,7 +71,7 @@ function ConnectionPage() {
         }
         setError('');
 
-        const generatedLobbyId = '1234';
+        const generatedLobbyId = Math.floor(1000 + Math.random() * 9000).toString();
 
         socket.emit('joinLobby', { 
             pseudo: username, 
@@ -78,44 +80,74 @@ function ConnectionPage() {
 
         navigate('/lobby');
     };
+    
+     const handleJoinGame = () => {
+         if (username.trim() === '') {
+             setError('Veuillez entrer un pseudo.');
+             return;
+         }
+         if (lobbyCode.trim() === '') {
+             setError('Veuillez entrer un code de lobby.');
+             return;
+         }
+         setError('');
 
-    const handleJoinGame = () => {
-
-        // logique pour rejoindre une partie
-
-        if (username.trim() === '') {
-            setError('Veuillez entrer un pseudo.');
-            return;
-        }
-        setError('');
-        navigate('/lobby');
-    };
+         socket.emit('joinLobby', { pseudo: username, lobbyId: lobbyCode });
+     };
 
     return (
         <div className="connection_page">
             <div className='page_wrapper'>
                 <div className='game_starter'>
-                    <h1>IMPOSTEUR</h1>       
+                    <h1>IMPOSTEUR</h1>
+                    
+                    {/* Boutons d’origine */}
                     <button onClick={handleCreateGame}>Créer une partie !</button>
                     <button onClick={handleJoinGame}>Rejoindre une partie !</button>
                     
+                    {/* Champ pseudo */}
                     <div>
                         <label htmlFor="username">
                             Votre pseudo 
                         </label>
-                        <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Entrez votre pseudo"/>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            value={username} 
+                            onChange={(e) => setUsername(e.target.value)} 
+                            placeholder="Entrez votre pseudo"
+                        />
                         {error && <p>{error}</p>}
                     </div>
+
+                     <div>
+                        <label htmlFor="lobbyCode">Code du lobby</label>
+                        <input
+                           type="text"
+                           id="lobbyCode"
+                           value={lobbyCode}
+                           onChange={(e) => setLobbyCode(e.target.value)}
+                           placeholder="Ex: 1234"
+                        />
+                      </div>
+
                 </div>
 
                 <div className='regles_box'>
                     <h2>Règles du jeu</h2>
                     <div className='regles_txt'>
                         Le jeu se joue en groupe avec au minimum 3 personnes.
-                        Au début de la partie, chacun reçoit un mot secret. Les joueurs doivent ensuite révéler petit à petit des informations sur leur mot pour deviner qui à le même mot qu’eux.
-                        Une fois que tout le monde à son rôle (= connait son mot), chaque joueur va un à un donner un mot clé qui décrit son mot. À la fin du tour, on vote pour éliminer la personne la plus suspecte. 
-                        Quand la personne est éliminée, sa carte et son rôle sont découvert. Si c'est Mr white, il a une chance de gagner en devinant le mot des civils. S’il le découvre, il gagne et la partie prend fin, sinon la partie continue. 
-                        Les civils gagnent s’il ne reste qu’eux en jeu et les Imposteur et Mr. White gagnent s’il ne reste qu’un civil en jeu.
+                        Au début de la partie, chacun reçoit un mot secret. Les joueurs
+                        doivent ensuite révéler petit à petit des informations sur leur mot 
+                        pour deviner qui a le même mot qu’eux.
+                        Une fois que tout le monde a son rôle (= connaît son mot),
+                        chaque joueur va un à un donner un mot clé qui décrit son mot.
+                        À la fin du tour, on vote pour éliminer la personne la plus suspecte.
+                        Quand la personne est éliminée, sa carte et son rôle sont découverts.
+                        Si c'est Mr White, il a une chance de gagner en devinant le mot des civils.
+                        S’il le découvre, il gagne et la partie prend fin, sinon la partie continue.
+                        Les civils gagnent s’il ne reste qu’eux en jeu et les Imposteur et Mr. White
+                        gagnent s’il ne reste qu’un civil en jeu.
                     </div>
                 </div>
                 
