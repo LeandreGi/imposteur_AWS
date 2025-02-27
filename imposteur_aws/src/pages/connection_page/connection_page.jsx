@@ -1,7 +1,10 @@
+// ConnectionPage.jsx
+
 import socket from '../socket';
 import './connection_page.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 function RolesCarousel() {
     const roles = [ 
@@ -47,7 +50,6 @@ function RolesCarousel() {
                 <h3>{currentRole.title}</h3>
                 <p>{currentRole.description}</p>
             </div>
-            
         </div>
     );
 }
@@ -81,19 +83,33 @@ function ConnectionPage() {
         navigate('/lobby');
     };
     
-     const handleJoinGame = () => {
-         if (username.trim() === '') {
-             setError('Veuillez entrer un pseudo.');
-             return;
-         }
-         if (lobbyCode.trim() === '') {
-             setError('Veuillez entrer un code de lobby.');
-             return;
-         }
-         setError('');
+    const handleJoinGame = () => {
+        if (username.trim() === '') {
+            setError('Veuillez entrer un pseudo.');
+            return;
+        }
+        if (lobbyCode.trim() === '') {
+            setError('Veuillez entrer un code de lobby.');
+            return;
+        }
+        setError('');
 
-         socket.emit('joinLobby', { pseudo: username, lobbyId: lobbyCode });
-     };
+        socket.emit('joinLobby', { pseudo: username, lobbyId: lobbyCode });
+    };
+
+    // Use effect pour écouter les événements de socket.io
+     useEffect(() => {
+        socket.on('lobbyData', (data) => {
+        // Rediriger vers la page du lobby
+          navigate('/lobby', {
+            state: {
+              username,
+              lobbyId: data.lobbyId,
+           ...data,
+            },
+          });
+        });
+      }, [navigate, username]);
 
     return (
         <div className="connection_page">
@@ -107,9 +123,7 @@ function ConnectionPage() {
                     
                     {/* Champ pseudo */}
                     <div>
-                        <label htmlFor="username">
-                            Votre pseudo 
-                        </label>
+                        <label htmlFor="username">Votre pseudo</label>
                         <input 
                             type="text" 
                             id="username" 
@@ -120,17 +134,16 @@ function ConnectionPage() {
                         {error && <p>{error}</p>}
                     </div>
 
-                     <div>
+                    <div>
                         <label htmlFor="lobbyCode">Code du lobby</label>
                         <input
-                           type="text"
-                           id="lobbyCode"
-                           value={lobbyCode}
-                           onChange={(e) => setLobbyCode(e.target.value)}
-                           placeholder="Ex: 1234"
+                            type="text"
+                            id="lobbyCode"
+                            value={lobbyCode}
+                            onChange={(e) => setLobbyCode(e.target.value)}
+                            placeholder="Ex: 1234"
                         />
-                      </div>
-
+                    </div>
                 </div>
 
                 <div className='regles_box'>
