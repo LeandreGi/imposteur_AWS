@@ -1,7 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { socket } from './socket';
-
+import { Routes, Route } from 'react-router-dom';
+import NavBar from './components/NavBar';
 import './App.css';
 
 import HomePage from './pages/connection_page/connection_page';
@@ -11,22 +10,26 @@ import ScorePage from './pages/score_page/ScorePage';
 
 function App() {
   return (
-    <Routes>
-      {/* page d’accueil */}
-      <Route path="/" element={<HomePage />} />
-      
-      {/* salle d’attente / lobby */}
-      <Route path="/lobby" element={<LobbyPage />} />
-      
-      {/* jeu en cours */}
-      <Route path="/game" element={<GamePage />} />
+    <>
+    {/* barre de navigation */}
+    <NavBar />
+      <Routes>
+        {/* page d’accueil */}
+        <Route path="/" element={<HomePage />} />
+        
+        {/* salle d’attente / lobby */}
+        <Route path="/lobby" element={<LobbyPage />} />
+        
+        {/* jeu en cours */}
+        <Route path="/game" element={<GamePage />} />
 
-      {/* page de score */}
-      <Route path="/score" element={<ScorePage />} />
+        {/* page de score */}
+        <Route path="/score" element={<ScorePage />} />
 
-      {/* page 404 */}
-      <Route path="*" element={<h1>404 - Page non trouvée</h1>} />
-    </Routes>
+        {/* page 404 */}
+        <Route path="*" element={<h1>404 - Page non trouvée</h1>} />
+      </Routes>
+    </>
   );
 }
 

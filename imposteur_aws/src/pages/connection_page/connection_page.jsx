@@ -75,12 +75,10 @@ function ConnectionPage() {
 
         const generatedLobbyId = Math.floor(1000 + Math.random() * 9000).toString();
 
-        socket.emit('joinLobby', { 
+        socket.emit('createLobby', { 
             pseudo: username, 
             lobbyId: generatedLobbyId 
         });
-
-        navigate('/lobby');
     };
     
     const handleJoinGame = () => {
@@ -109,6 +107,11 @@ function ConnectionPage() {
             },
           });
         });
+
+        socket.on('lobbyNotFound', ({ lobbyId }) => {
+            setError(`Le lobby avec l'id ${lobbyId} n'existe pas. Voulez-vous créer une partie ?`);
+        });
+
       }, [navigate, username]);
 
     return (
