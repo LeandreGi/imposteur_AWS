@@ -1,14 +1,55 @@
+// GamePage.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './GamePage.css';
+import animaux from '../../Data/Animaux.json';
+import couleurs from '../../Data/Couleurs.json';
+import fruits from '../../Data/Fruits.json';
+import manga from '../../Data/Manga.json';
+import vehicules from '../../Data/Véhicules.json';
+import villes from '../../Data/Villes.json';
+
+const families = [animaux, couleurs, fruits, manga, vehicules, villes];
+
+function getRandomWord(wordsArray) {
+  const idx = Math.floor(Math.random() * wordsArray.length);
+  return wordsArray[idx];
+}
+
+function pickFamilyAndWords() {
+  const randomIndex = Math.floor(Math.random() * families.length);
+  const chosenFamily = families[randomIndex];
+  const randomWordCivil = getRandomWord(chosenFamily.words);
+  let randomWordImposteur = getRandomWord(chosenFamily.words);
+  while (randomWordImposteur === randomWordCivil) {
+    randomWordImposteur = getRandomWord(chosenFamily.words);
+  }
+  return {
+    familyName: chosenFamily.family,
+    wordCivil: randomWordCivil,
+    wordImposteur: randomWordImposteur
+  };
+}
 
 const GamePage = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const username = state?.username || "Joueur";
+  const role = state?.role || "Civil";
   const [chrono, setChrono] = useState(60);
   const [inputWord, setInputWord] = useState('');
   const [spokenWords, setSpokenWords] = useState([]);
+  const [familyName, setFamilyName] = useState('');
+  const [wordCivil, setWordCivil] = useState('');
+  const [wordImposteur, setWordImposteur] = useState('');
+
+  useEffect(() => {
+    const { familyName, wordCivil, wordImposteur } = pickFamilyAndWords();
+    setFamilyName(familyName);
+    setWordCivil(wordCivil);
+    setWordImposteur(wordImposteur);
+  }, []);
 
   useEffect(() => {
     if (chrono > 0) {
@@ -24,9 +65,7 @@ const GamePage = () => {
     }
   };
 
-  // Fin de partie
   const endGame = () => {
-    // Implémenter ici la logique de fin de partie
     navigate('/score');
   };
 
@@ -36,14 +75,9 @@ const GamePage = () => {
         <h1>Partie en cours</h1>
       </header>
 
-      <section className="infoSection">
-        <div className="roleInfo">
-          <strong>Rôle :</strong> Civil
-        </div>
-        <div className="wordInfo">
-          <strong>Votre mot :</strong> LIBERTÉ
-        </div>
-      </section>
+      <p>Famille : {familyName}</p>
+      <p>Rôle : {role}</p>
+      <p>Votre mot : {role === 'Civil' ? wordCivil : wordImposteur}</p>
 
       <section className="chronoSection">
         <span className="chronoLabel">Temps restant : </span>
@@ -51,8 +85,8 @@ const GamePage = () => {
       </section>
 
       <section className="inputSection">
-        <input 
-          type="text" 
+        <input
+          type="text"
           placeholder="Entrez votre mot ici..."
           value={inputWord}
           onChange={(e) => setInputWord(e.target.value)}
