@@ -1,0 +1,110 @@
+.gameContainer {
+    min-height: 100vh;
+    background-color: #2C2C2C; 
+    color: #F4F4F4; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #FFFFFF;
+  }
+  
+  .infoSection {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .roleInfo,
+  .wordInfo {
+    font-size: 1.2rem;
+  }
+  
+  .chronoSection {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .chronoLabel {
+    font-weight: bold;
+  }
+  
+  .chronoValue {
+    color: #7B39E0; 
+  }
+  
+  .inputSection {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .wordInput {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #555;
+    background-color: #2C2C2C;
+    color: #F4F4F4;
+    width: 300px;
+  }
+  
+  .sendButton {
+    background-color: #6A0DAD;
+    color: #F4F4F4;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .sendButton:hover {
+    background-color: #7B39E0;
+  }
+  
+  .spokenWordsSection {
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 2rem;
+    text-align: left;
+  }
+  
+  .spokenWordsSection h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: #FFFFFF;
+  }
+  
+  .spokenWordsList {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .spokenWordsList li {
+    background-color: #3A3A3A;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .endGameButton {
+    background-color: #6A0DAD;
+    color: #F4F4F4;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    font-size: 1rem;
+  }
+  
+  .endGameButton:hover {
+    background-color: #7B39E0;
+  }
+  
