@@ -1,0 +1,76 @@
+.lobbyPage {
+    min-height: 100vh;
+    background-color: #2C2C2C;
+    color: #F4F4F4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+.lobbyPage h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #FFFFFF;
+}
+
+.lobbyPage p,
+.lobbyPage label,
+.lobbyPage li {
+    font-size: 1rem;
+    color: #F4F4F4;
+}
+
+.playersList,
+.gameSettings {
+    background: #3A3A3A;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(255, 255, 255, 0.05);
+    margin-bottom: 20px;
+    text-align: left;
+    width: 100%;
+    max-width: 600px;
+}
+
+.playersList h2,
+.gameSettings h3 {
+    margin-bottom: 10px;
+    color: #FFFFFF;
+}
+
+.playersList ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.playersList li {
+    margin-bottom: 0.5rem;
+}
+
+.gameSettings input[type="number"],
+.gameSettings input[type="checkbox"] {
+    margin: 0.5rem 0;
+}
+
+button {
+    background-color: #6A0DAD; 
+    color: #F4F4F4;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background-color: #7B39E0; 
+}
+
+button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
