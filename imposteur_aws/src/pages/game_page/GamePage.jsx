@@ -56,6 +56,11 @@ const GamePage = () => {
   };
 
   const handleSendWord = () => {
+    if (!/^[a-zA-ZÀ-ÖØ-öø-ÿ]+$/u.test(inputWord.trim())) {
+      alert("Veuillez entrer un seul mot sans espaces, sans chiffres et sans caractères spéciaux !");
+      return;
+    }
+
     if (inputWord.trim() !== '') {
       setSpokenWords(prev => [
         ...prev, 
