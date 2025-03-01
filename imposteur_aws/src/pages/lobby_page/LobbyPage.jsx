@@ -17,10 +17,11 @@ const LobbyPage = () => {
     const navigate = useNavigate();
 
     // États locaux pour configurer la partie
-    const [numCivils, setNumCivils] = useState(1);
+    const [numCivils, setNumCivils] = useState(2);
     const [numImposters, setNumImposters] = useState(1);
     const [numMrWhite, setNumMrWhite] = useState(0);
     const [randomDistribution, setRandomDistribution] = useState(false);
+    const [reflectionTime, setReflectionTime] = useState(60);
 
     // on quitte le lobby au demontage
     useEffect(() => {
@@ -48,7 +49,8 @@ const LobbyPage = () => {
                 numCivils,
                 numImposters,
                 numMrWhite,
-                randomDistribution
+                randomDistribution,
+                reflectionTime
             };
             // Envoyer ces données au serveur via le GameContext
             startGame(gameParams);
@@ -78,11 +80,20 @@ const LobbyPage = () => {
                 <div className='gameSettings'>
                     <h3>Paramètres de la partie</h3>
 
+                    <label>Temps de réflexion par joueur (secondes) : </label>
+                    <input
+                        type="number"
+                        value={reflectionTime}
+                        min={5}
+                        onChange={(e) => setReflectionTime(Number(e.target.value))}
+                    />
+                    <br />
+
                     <label>Nombre de civils : </label>
                     <input
                         type="number"
                         value={numCivils}
-                        min={1}
+                        min={2}
                         onChange={(e) => setNumCivils(Number(e.target.value))}
                     />
                     <br />

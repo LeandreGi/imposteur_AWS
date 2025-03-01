@@ -3,65 +3,66 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './GamePage.css';
-import animaux from '../../Data/Animaux.json';
-import couleurs from '../../Data/Couleurs.json';
-import fruits from '../../Data/Fruits.json';
-import manga from '../../Data/Manga.json';
-import vehicules from '../../Data/Véhicules.json';
-import villes from '../../Data/Villes.json';
-
-const families = [animaux, couleurs, fruits, manga, vehicules, villes];
-
-function getRandomWord(wordsArray) {
-  const idx = Math.floor(Math.random() * wordsArray.length);
-  return wordsArray[idx];
-}
-
-function pickFamilyAndWords() {
-  const randomIndex = Math.floor(Math.random() * families.length);
-  const chosenFamily = families[randomIndex];
-  const randomWordCivil = getRandomWord(chosenFamily.words);
-  let randomWordImposteur = getRandomWord(chosenFamily.words);
-  while (randomWordImposteur === randomWordCivil) {
-    randomWordImposteur = getRandomWord(chosenFamily.words);
-  }
-  return {
-    familyName: chosenFamily.family,
-    wordCivil: randomWordCivil,
-    wordImposteur: randomWordImposteur
-  };
-}
+import { useGameContext } from '../lobby_page/GameContext';
 
 const GamePage = () => {
   const navigate = useNavigate();
-  const { state } = useLocation();
-  const username = state?.username || "Joueur";
-  const role = state?.role || "Civil";
-  const [chrono, setChrono] = useState(60);
+
+  // On récupère tout depuis le contexte
+  const {
+    players,
+    userId,
+    reflectionTime,
+    familyName,  // choisi par le serveur
+    wordCivil,
+    wordImposteur
+  } = useGameContext();
+
+  // Rôle du joueur
+  const me = players.find((p) => p.id === userId);
+  const myRole = me?.role;
+  const myWord = me?.word;
+
+  // Index du joueur qui est en train de jouer
+  const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
+
+  // chrono initialisé avec reflectionTime
+  const [chrono, setChrono] = useState(reflectionTime);
+
   const [inputWord, setInputWord] = useState('');
   const [spokenWords, setSpokenWords] = useState([]);
-  const [familyName, setFamilyName] = useState('');
-  const [wordCivil, setWordCivil] = useState('');
-  const [wordImposteur, setWordImposteur] = useState('');
 
-  useEffect(() => {
-    const { familyName, wordCivil, wordImposteur } = pickFamilyAndWords();
-    setFamilyName(familyName);
-    setWordCivil(wordCivil);
-    setWordImposteur(wordImposteur);
-  }, []);
+  // Détermine si c'est à l'utilisateur de jouer
+  const isMyTurn = players[currentPlayerIndex]?.id === userId;
 
   useEffect(() => {
     if (chrono > 0) {
-      const timer = setTimeout(() => setChrono(chrono - 1), 1000);
+      const timer = setTimeout(() => setChrono((prev) => prev - 1), 1000);
       return () => clearTimeout(timer);
+    }
+    else {
+      // temps ecoulé = on passe au joueur suivant
+      goToNextPlayer();
     }
   }, [chrono]);
 
+  const goToNextPlayer = () => {
+    setCurrentPlayerIndex((prevInde) => {
+      const nextIndex = (prevInde + 1) % players.length;
+      return nextIndex;
+    } );
+    // reinitialisation du chrono
+    setChrono(reflectionTime);
+  };
+
   const handleSendWord = () => {
     if (inputWord.trim() !== '') {
-      setSpokenWords(prev => [...prev, { word: inputWord.trim(), pseudo: username }]);
+      setSpokenWords(prev => [
+        ...prev, 
+        { word: inputWord.trim(), pseudo: players[currentPlayerIndex]?.pseudo }
+      ]);
       setInputWord('');
+      goToNextPlayer();
     }
   };
 
@@ -76,8 +77,13 @@ const GamePage = () => {
       </header>
 
       <p>Famille : {familyName}</p>
-      <p>Rôle : {role}</p>
-      <p>Votre mot : {role === 'Civil' ? wordCivil : wordImposteur}</p>
+      {/* Afficher mon rôle et mon mot */}
+      <p>Mon rôle : {myRole}</p>
+      {myRole === 'MrWhite' ? (
+        <p>Je suis Mr White, je n'ai pas de mot !</p>
+      ) : (
+        <p>Mon mot : {myWord}</p>
+      )}
 
       <section className="chronoSection">
         <span className="chronoLabel">Temps restant : </span>
@@ -92,13 +98,22 @@ const GamePage = () => {
           onChange={(e) => setInputWord(e.target.value)}
           className="wordInput"
         />
-        <button onClick={handleSendWord} className="sendButton">
+        <button 
+          onClick={handleSendWord} 
+          className="sendButton"
+          disabled={currentPlayerIndex !== players.findIndex(p => p.id === userId)}
+        >
           Envoyer
         </button>
+        {!isMyTurn && (
+          <p className="waitingMessage">
+            C'est à {players[currentPlayerIndex]?.pseudo} de jouer...
+          </p>
+        )}
       </section>
 
       <section className="spokenWordsSection">
-        <h2>Mots dits pendant ce tour :</h2>
+        <h2>Mots déjà dits :</h2>
         {spokenWords.length > 0 ? (
           <ul className="spokenWordsList">
             {spokenWords.map((entry, index) => (

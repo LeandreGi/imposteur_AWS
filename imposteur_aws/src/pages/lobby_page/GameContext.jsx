@@ -12,6 +12,11 @@ export const GameProvider = ({ children }) => {
     const [userId, setUserId] = useState(null); // pour voir si le joueur est l'hôte ou non
     const [gameStarted, setGameStarted] = useState(false);
 
+    const [reflectionTime, setReflectionTime] = useState(60);
+    const [familyName, setFamilyName] = useState('');
+    const [wordCivil, setWordCivil] = useState('');
+    const [wordImposteur, setWordImposteur] = useState('');
+
     useEffect(() => {
         // Récupérer son propre socket.id
         socket.on('connect', () => {
@@ -32,11 +37,26 @@ export const GameProvider = ({ children }) => {
         })
 
         // Quand la partie démarre
-        socket.on('gameStarted', () => {
-            setGameStarted(true);
+        socket.on('gameStarted', (data) => {
+            if (data?.reflectionTime) {
+                setReflectionTime(data.reflectionTime);
+            }
+            if (data?.familyName) {
+                setFamilyName(data.familyName);
+            }
+            if (data?.wordCivil) {
+                setWordCivil(data.wordCivil);
+            }
+            if (data?.wordImposteur) {
+                setWordImposteur(data.wordImposteur);
+            }
+            if (data?.players) {
+                setPlayers(data.players);
+            }
+           setGameStarted(true);
         });
 
-        // on nettoie à la fermeture du composant ou quand on change de page
+        // nettoyage du listener socket
         return () => {
             socket.disconnect();
         };
@@ -52,7 +72,20 @@ export const GameProvider = ({ children }) => {
     };
 
     return (
-        <GameContext.Provider value={{ players, hostId, lobbyId, userId, gameStarted, startGame }}>
+        <GameContext.Provider 
+          value={{ 
+            players, 
+            hostId, 
+            lobbyId, 
+            userId, 
+            gameStarted, 
+            reflectionTime, 
+            familyName,
+            wordCivil,
+            wordImposteur,
+            startGame
+          }}
+        >
             {children}
         </GameContext.Provider>
     );
