@@ -226,6 +226,28 @@ io.on('connection', (socket) => {
             io.to(id).emit('playersUpdate', lobby.players);
         }
     });
+
+    socket.on('endGame', ({ lobbyId }) => {
+        const lobby = lobbies[lobbyId];
+        console.log(`Demande de fin de partie reçue pour le lobby ${lobbyId} par ${socket.id}`);
+      
+        if (!lobby) {
+          console.log("Lobby introuvable !");
+          return;
+        }
+      
+        if (socket.id !== lobby.hostId) {
+          console.log("Tentative de fin de partie par un joueur qui n'est pas l'hôte ce con!");
+          return;
+        }
+
+        lobby.gameStarted = false;
+        console.log("Partie terminée, envoi de l'événement 'gameEnded' à tous les joueurs du lobby AAAAAAAAAAAAAAAAAAAAAAAAAH", lobbyId);
+      
+        io.to(lobbyId).emit('gameEnded');
+      });
+      
+      
 });
 
 const PORT = 4000;

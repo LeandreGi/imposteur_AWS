@@ -4,16 +4,18 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './GamePage.css';
 import { useGameContext } from '../lobby_page/GameContext';
+import socket from '../socket';
 
 const GamePage = () => {
   const navigate = useNavigate();
 
-  // On récupère tout depuis le contexte
   const {
     players,
+    hostId,
     userId,
+    lobbyId,
     reflectionTime,
-    familyName,  // choisi par le serveur
+    familyName, 
     wordCivil,
     wordImposteur
   } = useGameContext();
@@ -46,6 +48,15 @@ const GamePage = () => {
     }
   }, [chrono]);
 
+  useEffect(() => {
+    socket.on('gameEnded', () => {
+      console.log("Événement 'gameEnded' reçu, redirection vers la page des scores...");
+      navigate('/score');
+    });
+    return () => socket.off('gameEnded');
+  }, [navigate]);
+  
+
   const goToNextPlayer = () => {
     setCurrentPlayerIndex((prevInde) => {
       const nextIndex = (prevInde + 1) % players.length;
@@ -72,8 +83,12 @@ const GamePage = () => {
   };
 
   const endGame = () => {
-    navigate('/score');
+    if (userId === hostId) {
+      console.log("L'hôte met fin à la partie...");
+      socket.emit('endGame', { lobbyId });
+    }
   };
+
 
   return (
     <div className="gameContainer">
@@ -84,7 +99,7 @@ const GamePage = () => {
       <p>Famille : {familyName}</p>
       {/* Afficher mon rôle et mon mot */}
       <p>Mon rôle : {myRole}</p>
-      {myRole === 'MrWhite' ? (
+      {myRole === 'mrWhite' ? (
         <p>Je suis Mr White, je n'ai pas de mot !</p>
       ) : (
         <p>Mon mot : {myWord}</p>
@@ -132,9 +147,11 @@ const GamePage = () => {
         )}
       </section>
 
-      <button onClick={endGame} className="endGameButton">
-        Fin de la partie : Voir le score
-      </button>
+      {userId === hostId && (
+        <button onClick={endGame} className="endGameButton">
+          Fin de la partie : Voir le score
+        </button>
+      )}
     </div>
   );
 };
