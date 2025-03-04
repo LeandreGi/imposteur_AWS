@@ -152,8 +152,8 @@ const GamePage = () => {
           Fin de la partie : Voir le score
         </button>
       )}
-    </div>
-  );
+      </div>
+    );
 };
 
 export default GamePage;

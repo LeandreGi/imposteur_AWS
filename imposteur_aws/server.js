@@ -50,6 +50,7 @@ function pickRandomFamilyAndWords() {
 }
 
 io.on('connection', (socket) => {
+    console.log('Un utilisateur connecté : ', socket.id);
     
     socket.on('createLobby', ({pseudo, lobbyId}) => {
         if (lobbies[lobbyId]) {
@@ -179,12 +180,15 @@ io.on('connection', (socket) => {
         };
         lobby.gameStarted = true;
 
+        lobby.currentPlayerIndex = 0;
+        lobby.spokenWords = [];
         // informer les joueurs que la partie a commencé
         io.to(lobbyId).emit('gameStarted', {
             reflectionTime,
             familyName,
             wordCivil,
             wordImposteur,
+            currentPlayerIndex : lobby.currentPlayerIndex,
             players : players.map(p => ({
                 id: p.id, 
                 pseudo: p.pseudo, 
@@ -192,6 +196,16 @@ io.on('connection', (socket) => {
                 word: p.word
             }))
         });
+    });
+
+    socket.on('nextTurn', ({ lobbyId }) => {
+        const lobby = lobbies[lobbyId];
+        if (!lobby) return;
+    
+        // Passer au joueur suivant de manière synchronisée
+        lobby.currentPlayerIndex = (lobby.currentPlayerIndex + 1) % lobby.players.length;
+        // Informer tous les clients du nouveau tour
+        io.to(lobbyId).emit('updateTurn', { currentPlayerIndex: lobby.currentPlayerIndex });
     });
 
     socket.on('leaveLobby', ({ lobbyId }) => {
