@@ -49,6 +49,13 @@ const GamePage = () => {
   }, [chrono]);
 
   useEffect(() => {
+    socket.on('newSpokenWords', (words) => {
+      setSpokenWords(words);
+    });
+    return () => socket.off('newSpokenWords');
+  }, []);
+
+  useEffect(() => {
     socket.on('gameEnded', () => {
       console.log("Événement 'gameEnded' reçu, redirection vers la page des scores...");
       navigate('/score');
@@ -73,10 +80,12 @@ const GamePage = () => {
     }
 
     if (inputWord.trim() !== '') {
-      setSpokenWords(prev => [
-        ...prev, 
-        { word: inputWord.trim(), pseudo: players[currentPlayerIndex]?.pseudo }
-      ]);
+      // on envoie l'info au serveur
+      socket.emit('wordSpoken', {
+        lobbyId,
+        word: inputWord.trim(),
+        pseudo: players[currentPlayerIndex]?.pseudo
+      });
       setInputWord('');
       goToNextPlayer();
     }

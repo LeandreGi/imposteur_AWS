@@ -22,6 +22,7 @@ const villes = require('./src/Data/Villes.json');
 const familles = [animaux, couleurs, fruits, manga, vehicules, villes];
 
 let lobbies = {}; 
+let lobbyWords = {};
 
 function pickRandomFamilyAndWords() {
     const randomIndex = Math.floor(Math.random() * familles.length);
@@ -206,6 +207,18 @@ io.on('connection', (socket) => {
     
         lobby.currentPlayerIndex = (lobby.currentPlayerIndex + 1) % lobby.players.length;
         io.to(lobbyId).emit('updateTurn', { currentPlayerIndex: lobby.currentPlayerIndex });
+    });
+
+    socket.on('wordSpoken', ({ lobbyId, word, pseudo }) => {
+        if (!lobbyWords[lobbyId]) {
+          lobbyWords[lobbyId] = [];
+        }
+    
+        // Ajoute ce mot au tableau correspondant au lobby
+        lobbyWords[lobbyId].push({ word, pseudo });
+    
+        // Broadcast à tous les joueurs du lobby la liste à jour
+        io.to(lobbyId).emit('newSpokenWords', lobbyWords[lobbyId]);
     });
 
     socket.on('leaveLobby', ({ lobbyId }) => {
