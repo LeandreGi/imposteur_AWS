@@ -243,6 +243,7 @@ io.on('connection', (socket) => {
       
         // Informe les autres joueurs de la mise à jour
         io.to(lobbyId).emit('playersUpdate', lobby.players);
+        io.to(lobbyId).emit('hostUpdate', lobby.hostId);
     });
 
     socket.on('disconnect', () => { 

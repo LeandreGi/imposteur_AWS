@@ -36,6 +36,10 @@ export const GameProvider = ({ children }) => {
             setPlayers(updatedPlayers);
         })
 
+        socket.on('hostUpdate', (hostId) => {
+            setHostId(hostId);
+        });
+
         // Quand la partie démarre
         socket.on('gameStarted', (data) => {
             setGameStarted(true);
