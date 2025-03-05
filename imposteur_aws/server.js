@@ -68,6 +68,7 @@ io.on('connection', (socket) => {
 
         // l'hote rejoint le lobby
         socket.join(lobbyId);
+        console.log(`Le joueur ${socket.id} a créé le lobby ${lobbyId}`);
 
         // ajout du joueur à la liste des joueurs
         lobbies[lobbyId].players.push({
@@ -99,7 +100,8 @@ io.on('connection', (socket) => {
 
         // Ajouter le joueur à la liste des joueurs du lobby
         socket.join(lobbyId);
-        existingLobby.players.push({ id: socket.id, pseudo }); 
+        existingLobby.players.push({ id: socket.id, pseudo });
+        console.log(`Le joueur ${socket.id} a rejoint le lobby ${lobbyId}`);
         
 
         //Envoyer au nouveau client les infos completes
@@ -157,7 +159,6 @@ io.on('connection', (socket) => {
         }
 
         const { familyName, wordCivil, wordImposteur } = pickRandomFamilyAndWords();
-
         // Envoyer les roles et les mots à chaque joueur
         players.forEach((player, index) => {
             const r = rolesArray[index] || 'civil';
@@ -166,6 +167,7 @@ io.on('connection', (socket) => {
                 player.word = wordCivil;
             } else if (r === 'imposteur') {
                 player.word = wordImposteur;
+
             } else {
                 // MrWhite
                 player.word = '';
@@ -202,17 +204,19 @@ io.on('connection', (socket) => {
         const lobby = lobbies[lobbyId];
         if (!lobby) return;
     
-        // Passer au joueur suivant de manière synchronisée
         lobby.currentPlayerIndex = (lobby.currentPlayerIndex + 1) % lobby.players.length;
-        // Informer tous les clients du nouveau tour
         io.to(lobbyId).emit('updateTurn', { currentPlayerIndex: lobby.currentPlayerIndex });
     });
 
     socket.on('leaveLobby', ({ lobbyId }) => {
-        
         const lobby = lobbies[lobbyId];
         if (!lobby) return; 
-      
+        
+        if (lobby.gameStarted) {
+            return
+        }
+
+        console.log(`Le joueur ${socket.id} quitte le lobby ${lobbyId}`);
         // Supprime le socket.id du joueur de la liste des joueurs
         lobby.players = lobby.players.filter((player) => player.id !== socket.id);
       
@@ -249,15 +253,10 @@ io.on('connection', (socket) => {
           console.log("Lobby introuvable !");
           return;
         }
-      
-        if (socket.id !== lobby.hostId) {
-          console.log("Tentative de fin de partie par un joueur qui n'est pas l'hôte ce con!");
-          return;
-        }
 
         lobby.gameStarted = false;
         console.log("Partie terminée, envoi de l'événement 'gameEnded' à tous les joueurs du lobby AAAAAAAAAAAAAAAAAAAAAAAAAH", lobbyId);
-      
+        console.log(`Joueurs dans le lobby ${lobbyId}:`, lobby.players.map(p => p.id));
         io.to(lobbyId).emit('gameEnded');
       });
       

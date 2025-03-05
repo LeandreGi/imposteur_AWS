@@ -83,10 +83,8 @@ const GamePage = () => {
   };
 
   const endGame = () => {
-    if (userId === hostId) {
-      console.log("L'hôte met fin à la partie...");
-      socket.emit('endGame', { lobbyId });
-    }
+    console.log("L'hôte met fin à la partie...");
+    socket.emit('endGame', { lobbyId });
   };
 
 

@@ -26,13 +26,16 @@ const LobbyPage = () => {
     // on quitte le lobby au demontage
     useEffect(() => {
         return () => {
-            // Quand la page Lobby se démonte, on émet l’info qu’on quitte le lobby
-            console.log("LobbyPage se démonte => on émet leaveLobby");
-            if (lobbyId) {
+            console.log("LobbyPage se démonte");
+            if (!gameStarted && lobbyId) {  // On ne quitte le lobby que si la partie n'a PAS commencé
+                console.log("On émet leaveLobby car la partie n'a PAS commencé.");
                 socket.emit('leaveLobby', { lobbyId });
+            } else {
+                console.log("La partie a commencé, on ne quitte PAS le lobby.");
             }
         };
-    }, [lobbyId]);
+    }, [lobbyId, gameStarted]);
+    
 
     useEffect(() => {
         // Si la partie vient de démarrer, on redirige le joueur vers l'écran de jeu

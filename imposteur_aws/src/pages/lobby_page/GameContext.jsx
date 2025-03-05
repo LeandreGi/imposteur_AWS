@@ -38,6 +38,8 @@ export const GameProvider = ({ children }) => {
 
         // Quand la partie démarre
         socket.on('gameStarted', (data) => {
+            setGameStarted(true);
+        
             if (data?.reflectionTime) {
                 setReflectionTime(data.reflectionTime);
             }
@@ -53,8 +55,8 @@ export const GameProvider = ({ children }) => {
             if (data?.players) {
                 setPlayers(data.players);
             }
-           setGameStarted(true);
         });
+        
 
         // nettoyage du listener socket
         return () => {
