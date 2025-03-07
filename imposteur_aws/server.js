@@ -204,8 +204,9 @@ io.on('connection', (socket) => {
     socket.on('nextTurn', ({ lobbyId }) => {
         const lobby = lobbies[lobbyId];
         if (!lobby) return;
-    
+        console.log(lobby.currentPlayerIndex);
         lobby.currentPlayerIndex = (lobby.currentPlayerIndex + 1) % lobby.players.length;
+        console.log(lobby.currentPlayerIndex);
         io.to(lobbyId).emit('updateTurn', { currentPlayerIndex: lobby.currentPlayerIndex });
     });
 

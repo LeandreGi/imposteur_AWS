@@ -44,9 +44,19 @@ const GamePage = () => {
     }
     else {
       // temps ecoulé = on passe au joueur suivant
-      goToNextPlayer();
+      socket.emit('nextTurn', { lobbyId });
     }
   }, [chrono]);
+
+  useEffect(() => {
+    socket.on('updateTurn', ({ currentPlayerIndex }) => {
+      setCurrentPlayerIndex(currentPlayerIndex);
+      // On réinitialise le chrono pour tout le monde
+      setChrono(reflectionTime);
+    });
+
+    return () => socket.off('updateTurn');
+  }, [reflectionTime]);
 
   useEffect(() => {
     socket.on('newSpokenWords', (words) => {
@@ -87,7 +97,7 @@ const GamePage = () => {
         pseudo: players[currentPlayerIndex]?.pseudo
       });
       setInputWord('');
-      goToNextPlayer();
+      socket.emit('nextTurn', { lobbyId });
     }
   };
 
