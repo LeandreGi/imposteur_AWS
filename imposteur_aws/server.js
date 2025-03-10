@@ -50,6 +50,78 @@ function pickRandomFamilyAndWords() {
     };
 }
 
+function processVotes(lobby, lobbyId) {
+    const voteCount = {};
+    Object.values(lobby.votes).forEach(accId => {
+        if (!voteCount[accId]) voteCount[accId] = 0;
+        voteCount[accId]++;
+    });
+   
+    let maxVotes = -1;
+    let eliminatedId = null;
+    for (const accusedId in voteCount) {
+        if (voteCount[accusedId] > maxVotes) {
+            maxVotes = voteCount[accusedId];
+            eliminatedId = accusedId;
+        }
+    }
+    // Éliminer le joueur
+    const eliminatedPlayer = lobby.players.find(p => p.id === eliminatedId);
+    if (eliminatedPlayer) {
+        eliminatedPlayer.eliminated = true;
+    }
+    
+    lobby.votes = {};
+
+    // Vérifier conditions de fin
+    if (checkEndGameConditions(lobby)) {
+        io.to(lobbyId).emit('gameEnded');
+    } else {
+        lobby.currentPhase = 'WORD_TELLING';
+        
+        // On repositionne le currentPlayerIndex sur le premier joueur vivant
+        // ou on garde le même index s’il n’est pas éliminé
+        if (lobby.players[lobby.currentPlayerIndex].eliminated) {
+            do {
+                lobby.currentPlayerIndex = (lobby.currentPlayerIndex + 1) % lobby.players.length;
+            } while (lobby.players[lobby.currentPlayerIndex].eliminated);
+        }
+        
+        sendGameState(lobbyId);
+
+        io.to(lobbyId).emit('updateTurn', { currentPlayerIndex: lobby.currentPlayerIndex });
+    }
+}
+
+function checkEndGameConditions(lobby) {
+    const livingPlayers = lobby.players.filter(p => !p.eliminated);
+    const imposters = livingPlayers.filter(p => p.role === 'imposteur');
+    const mrWhite = livingPlayers.filter(p => p.role === 'mrWhite');
+    const civils = livingPlayers.filter(p => p.role === 'civil');
+  
+    // plus d’imposteurs ni de Mr White = civils gagnent
+    if (imposters.length === 0 && mrWhite.length === 0) {
+        return true;
+    }
+    // imposteurs >= civils = imposters gagnent
+    if (imposters.length >= civils.length) {
+        return true;
+    }
+    return false;
+}
+
+function sendGameState(lobbyId) {
+    const lobby = lobbies[lobbyId];
+    if (!lobby) return;
+    io.to(lobbyId).emit('updateGameState', {
+      players: lobby.players,
+      currentPhase: lobby.currentPhase,
+      currentPlayerIndex: lobby.currentPlayerIndex,
+      spokenWords: lobby.spokenWords || [],
+      reflectionTime: lobby.reflectionTime
+    });
+  }
+
 io.on('connection', (socket) => {
     console.log('Un utilisateur connecté : ', socket.id);
     
@@ -64,7 +136,8 @@ io.on('connection', (socket) => {
             id: lobbyId,
             players: [],
             hostId: socket.id,
-            gameStarted: false
+            gameStarted: false,
+            currentPhase : 'WORD_TELLING'
         };
 
         // l'hote rejoint le lobby
@@ -74,7 +147,10 @@ io.on('connection', (socket) => {
         // ajout du joueur à la liste des joueurs
         lobbies[lobbyId].players.push({
             id: socket.id,
-            pseudo: pseudo,
+            pseudo,
+            role: null,
+            word: null,
+            eliminated: false
         });
 
         // envoi des infos du lobby au client
@@ -101,7 +177,13 @@ io.on('connection', (socket) => {
 
         // Ajouter le joueur à la liste des joueurs du lobby
         socket.join(lobbyId);
-        existingLobby.players.push({ id: socket.id, pseudo });
+        existingLobby.players.push({ 
+            id: socket.id, 
+            pseudo,
+            role: null,
+            word: null,
+            eliminated: false 
+        });
         console.log(`Le joueur ${socket.id} a rejoint le lobby ${lobbyId}`);
         
 
@@ -183,6 +265,7 @@ io.on('connection', (socket) => {
         };
         lobby.gameStarted = true;
 
+        lobby.currentPhase = 'WORD_TELLING';
         lobby.currentPlayerIndex = 0;
         lobby.spokenWords = [];
         // informer les joueurs que la partie a commencé
@@ -205,9 +288,21 @@ io.on('connection', (socket) => {
         const lobby = lobbies[lobbyId];
         if (!lobby) return;
         console.log(lobby.currentPlayerIndex);
-        lobby.currentPlayerIndex = (lobby.currentPlayerIndex + 1) % lobby.players.length;
+
+        //probleme comment savoir si on a fait un tour complet
+        do {
+            lobby.currentPlayerIndex = (lobby.currentPlayerIndex + 1) % lobby.players.length;
+        } while (lobby.players[lobby.currentPlayerIndex].eliminated);
+
         console.log(lobby.currentPlayerIndex);
-        io.to(lobbyId).emit('updateTurn', { currentPlayerIndex: lobby.currentPlayerIndex });
+
+        if (lobby.currentPlayerIndex === 0) {
+            lobby.currentPhase = 'VOTING';
+            io.to(lobbyId).emit('startVotingPhase');
+        } else {
+            io.to(lobbyId).emit('updateTurn', { currentPlayerIndex: lobby.currentPlayerIndex });
+        }
+        sendGameState(lobbyId);
     });
 
     socket.on('wordSpoken', ({ lobbyId, word, pseudo }) => {
@@ -220,6 +315,19 @@ io.on('connection', (socket) => {
     
         // Broadcast à tous les joueurs du lobby la liste à jour
         io.to(lobbyId).emit('newSpokenWords', lobbyWords[lobbyId]);
+    });
+
+    socket.on('vote', ({ lobbyId, voterId, accusedId }) => {
+        const lobby = lobbies[lobbyId];
+        if (!lobby) return;
+
+        lobby.votes[voterId] = accusedId;
+
+        const alivePlayers = lobby.players.filter(p => !p.eliminated);
+        if (Object.keys(lobby.votes).length === alivePlayers.length) {
+            // Tous les joueurs ont voté
+            processVotes(lobbyId);
+        }
     });
 
     socket.on('leaveLobby', ({ lobbyId }) => {
