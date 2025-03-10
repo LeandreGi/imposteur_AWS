@@ -50,6 +50,19 @@ function pickRandomFamilyAndWords() {
     };
 }
 
+function updateVotes(lobbyId) {
+    const lobby = lobbies[lobbyId];
+    if (!lobby) return;
+    const voteCount = {};
+    Object.values(lobby.votes).forEach((accusedId) => {
+      if (!voteCount[accusedId]) {
+        voteCount[accusedId] = 0;
+      }
+      voteCount[accusedId]++;
+    });
+    io.to(lobbyId).emit('votesUpdate', voteCount);
+  };
+
 function processVotes(lobby, lobbyId) {
     const voteCount = {};
     Object.values(lobby.votes).forEach(accId => {
@@ -137,7 +150,8 @@ io.on('connection', (socket) => {
             players: [],
             hostId: socket.id,
             gameStarted: false,
-            currentPhase : 'WORD_TELLING'
+            currentPhase : 'WORD_TELLING',
+            votes: {}
         };
 
         // l'hote rejoint le lobby
@@ -334,13 +348,15 @@ io.on('connection', (socket) => {
       });
     
 
-    socket.on('vote', ({ lobbyId, voterId, accusedId }) => {
+      socket.on('vote', ({ lobbyId, voterId, accusedId }) => {
         const lobby = lobbies[lobbyId];
         if (!lobby) return;
         lobby.votes[voterId] = accusedId;
+        updateVotes(lobbyId);
+        // On vérifie si tous les joueurs vivants ont voté
         const alivePlayers = lobby.players.filter(p => !p.eliminated);
         if (Object.keys(lobby.votes).length === alivePlayers.length) {
-            processVotes(lobbyId);
+            processVotes(lobby, lobbyId);
         }
     });
 

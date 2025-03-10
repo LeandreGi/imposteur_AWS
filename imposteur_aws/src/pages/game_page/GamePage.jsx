@@ -1,5 +1,3 @@
-// GamePage.jsx
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './GamePage.css';
@@ -35,6 +33,7 @@ const GamePage = () => {
   const [inputWord, setInputWord] = useState('');
   const [spokenWords, setSpokenWords] = useState([]);
   const [selectedVote, setSelectedVote] = useState(null);
+  const [voteCounts, setVoteCounts] = useState({});
 
   // Détermine si c'est à l'utilisateur de jouer
   const isMyTurn = players[currentPlayerIndex]?.id === userId;
@@ -75,15 +74,21 @@ const GamePage = () => {
     return () => socket.off('gameEnded');
   }, [navigate]);
   
+  useEffect(() => {
+    socket.on('votesUpdate', (voteCount) => {
+      setVoteCounts(voteCount);
+    });
+    return () => socket.off('votesUpdate');
+  }, []);
 
-  const goToNextPlayer = () => {
-    setCurrentPlayerIndex((prevInde) => {
-      const nextIndex = (prevInde + 1) % players.length;
-      return nextIndex;
-    } );
-    // reinitialisation du chrono
-    setChrono(reflectionTime);
-  };
+  // const goToNextPlayer = () => {
+  //   setCurrentPlayerIndex((prevInde) => {
+  //     const nextIndex = (prevInde + 1) % players.length;
+  //     return nextIndex;
+  //   } );
+  //   // reinitialisation du chrono
+  //   setChrono(reflectionTime);
+  // };
 
   const handleSendWord = () => {
     if (!/^[a-zA-ZÀ-ÖØ-öø-ÿ]+$/u.test(inputWord.trim())) {
@@ -103,9 +108,21 @@ const GamePage = () => {
     }
   };
 
+  const handleVoteClick = (accusedId) => {
+    // Met à jour le joueur pour qui on vote
+    setSelectedVote(accusedId);
+  };
+
   const handleVote = () => {
     if (selectedVote) {
-      socket.emit('vote', { lobbyId, voterId: userId, accusedId: selectedVote });
+      socket.emit('vote', {
+        lobbyId,
+        voterId: userId,
+        accusedId: selectedVote
+      });
+      setSelectedVote(null);
+    } else {
+      alert("Veuillez sélectionner un joueur à accuser.");
     }
   };
 
@@ -126,11 +143,15 @@ const GamePage = () => {
         <h1>Partie en cours</h1>
       </header>
 
+      {/* Phase de mots */}
       {currentPhase === 'WORD_TELLING' ? (
         <>
           <p>Famille : {familyName}</p>
           <p>Mon rôle : {myRole}</p>
-          {myRole === 'mrWhite' ? <p>Je suis Mr White, je n'ai pas de mot !</p> : <p>Mon mot : {myWord}</p>}
+          {myRole === 'mrWhite'
+            ? <p>Je suis Mr White, je n'ai pas de mot !</p>
+            : <p>Mon mot : {myWord}</p>
+          }
 
           <section className="chronoSection">
             <span className="chronoLabel">Temps restant : </span>
@@ -166,45 +187,44 @@ const GamePage = () => {
           </section>
         </>
       ) : (
+        // Phase de votes
         <section className="votingSection">
-    <h1 className="votingTitle">VOTES</h1>
+          <h1 className="votingTitle">VOTES</h1>
 
-    <div className="playersVotes">
-      {players.map((player) => (
-        <div key={player.id} className="playerColumn">
-          <h2>{player.pseudo}</h2>
+          <div className="playersVotes">
+            {players.map((player) => (
+              <div key={player.id} className="playerColumn">
+                <h2>{player.pseudo}</h2>
 
-          <div className="voteIndicators">
-            {players
-              .filter((p) => p.id !== player.id)
-              .map((other) => {
+                <div className="voteIndicators">
+                  <p>Votes reçus : {voteCounts[player.id] || 0}</p>
+                </div>
 
-                const hasVotedFor = false;
-                return (
-                  <div
-                    key={other.id}
-                    className={`voteSquare ${hasVotedFor ? 'voted' : ''}`}
+                {/* On empêche de se voter soi-même */}
+                {player.id !== userId && !player.eliminated && (
+                  <button
+                    className="voteButton"
+                    onClick={() => handleVoteClick(player.id)}
                   >
-                  </div>
-                );
-              })}
+                    vote
+                  </button>
+                )}
+              </div>
+            ))}
           </div>
 
-          <button className="voteButton">vote</button>
-        </div>
-      ))}
-    </div>
-
-    <button className="validateButton">valider</button>
-  </section>
+          <button className="validateButton" onClick={handleVote}>
+            valider
+          </button>
+        </section>
       )}
 
+      {/* Boutons pour l'hôte */}
       {userId === hostId && currentPhase === 'WORD_TELLING' && (
         <button onClick={startVotingPhase} className="endGameButton">
           Lancement de la phase de vote
         </button>
       )}
-
       {userId === hostId && (
         <button onClick={endGame} className="endGameButton">
           Fin de la partie : Voir le score
