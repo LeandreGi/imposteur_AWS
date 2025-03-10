@@ -167,24 +167,40 @@ const GamePage = () => {
         </>
       ) : (
         <section className="votingSection">
-          <h2>Votez pour éliminer un joueur</h2>
-          <ul>
-            {players.filter(p => !p.eliminated).map(player => (
-              <li key={player.id}>
-                <input
-                  type="radio"
-                  name="vote"
-                  value={player.id}
-                  onChange={() => setSelectedVote(player.id)}
-                />
-                {player.pseudo}
-              </li>
-            ))}
-          </ul>
-          <button onClick={handleVote} disabled={!selectedVote}>
-            Voter
-          </button>
-        </section>
+    <h1 className="votingTitle">VOTES</h1>
+
+    <div className="playersVotes">
+      {players.map((player) => (
+        <div key={player.id} className="playerColumn">
+          <h2>{player.pseudo}</h2>
+
+          {/* Ici, on affiche des carrés ou icônes pour représenter qui a voté pour qui */}
+          <div className="voteIndicators">
+            {players
+              .filter((p) => p.id !== player.id)
+              .map((other) => {
+
+                const hasVotedFor = false; // Remplace par ta logique
+                return (
+                  <div
+                    key={other.id}
+                    className={`voteSquare ${hasVotedFor ? 'voted' : ''}`}
+                  >
+                    {/* Optionnel: icône ou initiale du voter */}
+                  </div>
+                );
+              })}
+          </div>
+
+          {/* Bouton "vote" individuel si nécessaire, ou tu peux gérer un seul bouton "valider" global */}
+          <button className="voteButton">vote</button>
+        </div>
+      ))}
+    </div>
+
+    {/* Bouton global de validation */}
+    <button className="validateButton">valider</button>
+  </section>
       )}
 
       {userId === hostId && currentPhase === 'WORD_TELLING' && (

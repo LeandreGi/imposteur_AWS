@@ -108,3 +108,94 @@
     background-color: #7B39E0;
   }
   
+
+/* Container global de la section de vote */
+.votingSection {
+  text-align: center;
+  background-color: #2C2C2C; /* Couleur de fond similaire à l'image */
+  color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+/* Titre principal "VOTES" */
+.votingTitle {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+/* Conteneur pour aligner les colonnes de joueurs */
+.playersVotes {
+  display: flex;
+  justify-content: center;
+  gap: 40px; /* Espace entre les colonnes */
+}
+
+/* Chaque colonne correspond à un joueur */
+.playerColumn {
+  background-color: #3A3A3A; /* Couleur un peu plus foncée */
+  padding: 20px;
+  border-radius: 10px;
+  width: 150px;
+  text-align: center;
+}
+
+/* Nom du joueur */
+.playerColumn h2 {
+  margin-bottom: 10px;
+}
+
+/* Avatar du joueur */
+.playerAvatar {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 10px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+}
+
+/* Zone qui affiche les carrés/icônes de vote */
+.voteIndicators {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* Chaque carré représentant un vote */
+.voteSquare {
+  width: 32px;
+  height: 32px;
+  background-color: #bbb;
+  margin: 4px 0;
+  border-radius: 4px;
+}
+
+/* Si on veut distinguer un carré "voté" */
+.voteSquare.voted {
+  background-color: #f00; /* Couleur rouge si voté */
+}
+
+/* Bouton "vote" individuel */
+.voteButton {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #e58a2f;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Bouton global "valider" */
+.validateButton {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #49c14e;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
