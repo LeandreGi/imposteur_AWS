@@ -174,31 +174,27 @@ const GamePage = () => {
         <div key={player.id} className="playerColumn">
           <h2>{player.pseudo}</h2>
 
-          {/* Ici, on affiche des carrés ou icônes pour représenter qui a voté pour qui */}
           <div className="voteIndicators">
             {players
               .filter((p) => p.id !== player.id)
               .map((other) => {
 
-                const hasVotedFor = false; // Remplace par ta logique
+                const hasVotedFor = false;
                 return (
                   <div
                     key={other.id}
                     className={`voteSquare ${hasVotedFor ? 'voted' : ''}`}
                   >
-                    {/* Optionnel: icône ou initiale du voter */}
                   </div>
                 );
               })}
           </div>
 
-          {/* Bouton "vote" individuel si nécessaire, ou tu peux gérer un seul bouton "valider" global */}
           <button className="voteButton">vote</button>
         </div>
       ))}
     </div>
 
-    {/* Bouton global de validation */}
     <button className="validateButton">valider</button>
   </section>
       )}
