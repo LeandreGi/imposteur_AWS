@@ -17,7 +17,8 @@ const GamePage = () => {
     reflectionTime,
     familyName, 
     wordCivil,
-    wordImposteur
+    wordImposteur,
+    currentPhase = 'WORD_TELLING'
   } = useGameContext();
 
   // Rôle du joueur
@@ -33,6 +34,7 @@ const GamePage = () => {
 
   const [inputWord, setInputWord] = useState('');
   const [spokenWords, setSpokenWords] = useState([]);
+  const [selectedVote, setSelectedVote] = useState(null);
 
   // Détermine si c'est à l'utilisateur de jouer
   const isMyTurn = players[currentPlayerIndex]?.id === userId;
@@ -101,6 +103,17 @@ const GamePage = () => {
     }
   };
 
+  const handleVote = () => {
+    if (selectedVote) {
+      socket.emit('vote', { lobbyId, voterId: userId, accusedId: selectedVote });
+    }
+  };
+
+  const startVotingPhase = () => {
+    console.log("Bouton lancé : startVotingPhase");
+    socket.emit('startVotingPhase', { lobbyId });
+  };
+
   const endGame = () => {
     console.log("L'hôte met fin à la partie...");
     socket.emit('endGame', { lobbyId });
@@ -113,64 +126,80 @@ const GamePage = () => {
         <h1>Partie en cours</h1>
       </header>
 
-      <p>Famille : {familyName}</p>
-      {/* Afficher mon rôle et mon mot */}
-      <p>Mon rôle : {myRole}</p>
-      {myRole === 'mrWhite' ? (
-        <p>Je suis Mr White, je n'ai pas de mot !</p>
+      {currentPhase === 'WORD_TELLING' ? (
+        <>
+          <p>Famille : {familyName}</p>
+          <p>Mon rôle : {myRole}</p>
+          {myRole === 'mrWhite' ? <p>Je suis Mr White, je n'ai pas de mot !</p> : <p>Mon mot : {myWord}</p>}
+
+          <section className="chronoSection">
+            <span className="chronoLabel">Temps restant : </span>
+            <span className="chronoValue">{chrono}s</span>
+          </section>
+
+          <section className="inputSection">
+            <input
+              type="text"
+              placeholder="Entrez votre mot ici..."
+              value={inputWord}
+              onChange={(e) => setInputWord(e.target.value)}
+              className="wordInput"
+            />
+            <button onClick={handleSendWord} className="sendButton">
+              Envoyer
+            </button>
+          </section>
+
+          <section className="spokenWordsSection">
+            <h2>Mots déjà dits :</h2>
+            {spokenWords.length > 0 ? (
+              <ul className="spokenWordsList">
+                {spokenWords.map((entry, index) => (
+                  <li key={index}>
+                    {entry.word} <span className="wordSender">- {entry.pseudo}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>Aucun mot n'a encore été dit.</p>
+            )}
+          </section>
+        </>
       ) : (
-        <p>Mon mot : {myWord}</p>
-      )}
-
-      <section className="chronoSection">
-        <span className="chronoLabel">Temps restant : </span>
-        <span className="chronoValue">{chrono}s</span>
-      </section>
-
-      <section className="inputSection">
-        <input
-          type="text"
-          placeholder="Entrez votre mot ici..."
-          value={inputWord}
-          onChange={(e) => setInputWord(e.target.value)}
-          className="wordInput"
-        />
-        <button 
-          onClick={handleSendWord} 
-          className="sendButton"
-          disabled={currentPlayerIndex !== players.findIndex(p => p.id === userId)}
-        >
-          Envoyer
-        </button>
-        {!isMyTurn && (
-          <p className="waitingMessage">
-            C'est à {players[currentPlayerIndex]?.pseudo} de jouer...
-          </p>
-        )}
-      </section>
-
-      <section className="spokenWordsSection">
-        <h2>Mots déjà dits :</h2>
-        {spokenWords.length > 0 ? (
-          <ul className="spokenWordsList">
-            {spokenWords.map((entry, index) => (
-              <li key={index}>
-                {entry.word} <span className="wordSender">- {entry.pseudo}</span>
+        <section className="votingSection">
+          <h2>Votez pour éliminer un joueur</h2>
+          <ul>
+            {players.filter(p => !p.eliminated).map(player => (
+              <li key={player.id}>
+                <input
+                  type="radio"
+                  name="vote"
+                  value={player.id}
+                  onChange={() => setSelectedVote(player.id)}
+                />
+                {player.pseudo}
               </li>
             ))}
           </ul>
-        ) : (
-          <p>Aucun mot n'a encore été dit.</p>
-        )}
-      </section>
+          <button onClick={handleVote} disabled={!selectedVote}>
+            Voter
+          </button>
+        </section>
+      )}
+
+      {userId === hostId && currentPhase === 'WORD_TELLING' && (
+        <button onClick={startVotingPhase} className="endGameButton">
+          Lancement de la phase de vote
+        </button>
+      )}
 
       {userId === hostId && (
         <button onClick={endGame} className="endGameButton">
           Fin de la partie : Voir le score
         </button>
       )}
-      </div>
-    );
+    </div>
+  );
 };
 
 export default GamePage;

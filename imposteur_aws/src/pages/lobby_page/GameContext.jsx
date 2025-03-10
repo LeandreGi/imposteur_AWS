@@ -16,6 +16,7 @@ export const GameProvider = ({ children }) => {
     const [familyName, setFamilyName] = useState('');
     const [wordCivil, setWordCivil] = useState('');
     const [wordImposteur, setWordImposteur] = useState('');
+    const [currentPhase, setCurrentPhase] = useState('WORD_TELLING');
 
     useEffect(() => {
         // Récupérer son propre socket.id
@@ -60,7 +61,15 @@ export const GameProvider = ({ children }) => {
                 setPlayers(data.players);
             }
         });
+
+        socket.on('startVotingPhase', () => {
+            setCurrentPhase('VOTING');
+        });
         
+        socket.on('updateGameState', (data) => {
+            setPlayers(data.players);
+            setCurrentPhase(data.currentPhase);
+        });
 
         // nettoyage du listener socket
         return () => {
@@ -89,6 +98,7 @@ export const GameProvider = ({ children }) => {
             familyName,
             wordCivil,
             wordImposteur,
+            currentPhase,
             startGame
           }}
         >

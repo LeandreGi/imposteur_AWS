@@ -317,15 +317,29 @@ io.on('connection', (socket) => {
         io.to(lobbyId).emit('newSpokenWords', lobbyWords[lobbyId]);
     });
 
+    socket.on('startVotingPhase', ({ lobbyId }) => {
+        const lobby = lobbies[lobbyId];
+        if (!lobby) {
+          console.log("Lobby introuvable dans startVotingPhase");
+          return;
+        }
+        if (socket.id !== lobby.hostId) {
+          console.log("startVotingPhase refusé : ce socket n'est pas l'hôte");
+          return;
+        }
+        lobby.currentPhase = 'VOTING';
+        console.log(`Phase de vote lancée dans le lobby ${lobbyId} par l'hôte ${socket.id}`);
+        io.to(lobbyId).emit('startVotingPhase');
+        sendGameState(lobbyId);
+      });
+    
+
     socket.on('vote', ({ lobbyId, voterId, accusedId }) => {
         const lobby = lobbies[lobbyId];
         if (!lobby) return;
-
         lobby.votes[voterId] = accusedId;
-
         const alivePlayers = lobby.players.filter(p => !p.eliminated);
         if (Object.keys(lobby.votes).length === alivePlayers.length) {
-            // Tous les joueurs ont voté
             processVotes(lobbyId);
         }
     });
