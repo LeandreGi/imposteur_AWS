@@ -174,6 +174,7 @@ io.on('connection', (socket) => {
             players: lobbies[lobbyId].players,
             hostId: lobbies[lobbyId].hostId,
             gameStarted: lobbies[lobbyId].gameStarted,
+            currentPhase: lobbies[lobbyId].currentPhase
         });
 
         // averti tout le lobby qu'un joueur a rejoint

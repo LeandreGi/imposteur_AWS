@@ -44,6 +44,7 @@ export const GameProvider = ({ children }) => {
         // Quand la partie démarre
         socket.on('gameStarted', (data) => {
             setGameStarted(true);
+            setCurrentPhase('WORD_TELLING');
         
             if (data?.reflectionTime) {
                 setReflectionTime(data.reflectionTime);
