@@ -114,20 +114,21 @@ function calculateScores(lobby) {
     let impostor = lobby.players.find(p => p.role === 'imposteur');
 
     lobby.players.forEach(player => {
-        scores[player.id] = 0; // Initialisation des scores
+        scores[player.id] = 0;
     });
 
     if (impostor) {
         lobby.players.forEach(player => {
             if (player.role === 'civil') {
                 if (lobby.votes[player.id] === impostor.id) {
-                    scores[player.id] += 100; // Civil gagne 100 points s'il a voté pour l'imposteur
+                    scores[player.id] += 100;
                 } else {
                     scores[impostor.id] += 100; // L'imposteur gagne 100 points si un civil ne vote pas contre lui
                 }
             }
         });
     }
+    console.log(scores)
 
     return scores;
 }

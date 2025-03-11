@@ -212,24 +212,25 @@ const GamePage = () => {
               </div>
             ))}
           </div>
-
-          <button className="validateButton" onClick={handleVote}>
-            valider
-          </button>
+          <div className='voting_button_section'>
+            <button className="validateButton" onClick={handleVote}>
+              valider
+            </button>
+            {userId === hostId && (
+              <button onClick={endGame} className="endGameButton">
+                Fin de la partie : Voir le score
+              </button>
+            )}
+          </div>
         </section>
       )}
 
       {/* Boutons pour l'hôte */}
       {userId === hostId && currentPhase === 'WORD_TELLING' && (
-        <button onClick={startVotingPhase} className="endGameButton">
-          Lancement de la phase de vote
-        </button>
-      )}
-      {userId === hostId && (
-        <button onClick={endGame} className="endGameButton">
-          Fin de la partie : Voir le score
-        </button>
-      )}
+            <button onClick={startVotingPhase} className="endGameButton">
+              Lancement de la phase de vote
+            </button>
+          )}
     </div>
   );
 };
