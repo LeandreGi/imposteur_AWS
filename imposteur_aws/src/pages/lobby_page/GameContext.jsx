@@ -17,6 +17,9 @@ export const GameProvider = ({ children }) => {
     const [wordCivil, setWordCivil] = useState('');
     const [wordImposteur, setWordImposteur] = useState('');
     const [currentPhase, setCurrentPhase] = useState('WORD_TELLING');
+    const [scores, setScores] = useState({});
+    const [impostor, setImpostor] = useState(null);
+
 
     useEffect(() => {
         // Récupérer son propre socket.id
@@ -72,6 +75,11 @@ export const GameProvider = ({ children }) => {
             setCurrentPhase(data.currentPhase);
         });
 
+        socket.on('gameEnded', (data) => {
+            setScores(data.scores);
+            setImpostor(data.impostor);
+        });        
+
         // nettoyage du listener socket
         return () => {
             socket.disconnect();
@@ -100,7 +108,9 @@ export const GameProvider = ({ children }) => {
             wordCivil,
             wordImposteur,
             currentPhase,
-            startGame
+            startGame,
+            scores,
+            impostor
           }}
         >
             {children}

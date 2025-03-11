@@ -63,13 +63,13 @@ function updateVotes(lobbyId) {
     io.to(lobbyId).emit('votesUpdate', voteCount);
   };
 
-function processVotes(lobby, lobbyId) {
+  function processVotes(lobby, lobbyId) {
     const voteCount = {};
     Object.values(lobby.votes).forEach(accId => {
         if (!voteCount[accId]) voteCount[accId] = 0;
         voteCount[accId]++;
     });
-   
+
     let maxVotes = -1;
     let eliminatedId = null;
     for (const accusedId in voteCount) {
@@ -78,33 +78,60 @@ function processVotes(lobby, lobbyId) {
             eliminatedId = accusedId;
         }
     }
-    // Éliminer le joueur
+
+    // Élimination du joueur
     const eliminatedPlayer = lobby.players.find(p => p.id === eliminatedId);
     if (eliminatedPlayer) {
         eliminatedPlayer.eliminated = true;
     }
-    
-    lobby.votes = {};
 
-    // Vérifier conditions de fin
+    lobby.votes = {}; // Réinitialisation des votes
+
+    // Calcul des scores
+    let scores = calculateScores(lobby);
+
+    // Vérification des conditions de fin de partie
     if (checkEndGameConditions(lobby)) {
-        io.to(lobbyId).emit('gameEnded');
+        io.to(lobbyId).emit('gameEnded', { scores, impostor: lobby.players.find(p => p.role === 'imposteur') });
     } else {
         lobby.currentPhase = 'WORD_TELLING';
-        
-        // On repositionne le currentPlayerIndex sur le premier joueur vivant
-        // ou on garde le même index s’il n’est pas éliminé
+
         if (lobby.players[lobby.currentPlayerIndex].eliminated) {
             do {
                 lobby.currentPlayerIndex = (lobby.currentPlayerIndex + 1) % lobby.players.length;
             } while (lobby.players[lobby.currentPlayerIndex].eliminated);
         }
-        
+
         sendGameState(lobbyId);
 
         io.to(lobbyId).emit('updateTurn', { currentPlayerIndex: lobby.currentPlayerIndex });
     }
 }
+
+
+function calculateScores(lobby) {
+    let scores = {};
+    let impostor = lobby.players.find(p => p.role === 'imposteur');
+
+    lobby.players.forEach(player => {
+        scores[player.id] = 0; // Initialisation des scores
+    });
+
+    if (impostor) {
+        lobby.players.forEach(player => {
+            if (player.role === 'civil') {
+                if (lobby.votes[player.id] === impostor.id) {
+                    scores[player.id] += 100; // Civil gagne 100 points s'il a voté pour l'imposteur
+                } else {
+                    scores[impostor.id] += 100; // L'imposteur gagne 100 points si un civil ne vote pas contre lui
+                }
+            }
+        });
+    }
+
+    return scores;
+}
+
 
 function checkEndGameConditions(lobby) {
     const livingPlayers = lobby.players.filter(p => !p.eliminated);

@@ -1,0 +1,70 @@
+.ScorePage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #2C2C2C;
+  padding: 20px;
+}
+
+.page_wrapper_score_page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #3A3A3A;
+  color: #F4F4F4;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(255, 255, 255, 0.05);
+  padding: 30px;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+}
+
+.impostor_announcement {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 15px 0;
+  color: #FF4444; /* Rouge pour mettre en avant l'imposteur */
+}
+
+.score_table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.score_table th, .score_table td {
+  padding: 10px;
+  border-bottom: 1px solid #555;
+}
+
+.score_table th {
+  background-color: #4A4A4A;
+  color: #F4F4F4;
+}
+
+.score_table td {
+  background-color: #3A3A3A;
+  color: #F4F4F4;
+}
+
+.score_table tr:nth-child(even) td {
+  background-color: #4A4A4A;
+}
+
+.return_button {
+  background-color: #6A0DAD;
+  color: #F4F4F4;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background 0.3s ease;
+}
+
+.return_button:hover {
+  background-color: #7B39E0;
+}
