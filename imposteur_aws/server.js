@@ -389,6 +389,18 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('chatMessage', ({ lobbyId, userId, message }) => {
+        const lobby = lobbies[lobbyId];
+        if (!lobby) return;
+        const sender = lobby.players.find(p => p.id === userId);
+        if (!sender) return;      
+        io.to(lobbyId).emit('chatMessage', {
+          userId,
+          pseudo: sender.pseudo,
+          message
+        });
+      });
+
     socket.on('leaveLobby', ({ lobbyId }) => {
         const lobby = lobbies[lobbyId];
         if (!lobby) return; 
@@ -443,7 +455,7 @@ io.on('connection', (socket) => {
       });
       
       
-});
+});  
 
 const PORT = 4000;
 server.listen(PORT, () => {

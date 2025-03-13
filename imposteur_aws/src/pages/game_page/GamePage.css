@@ -206,3 +206,64 @@
   align-items: center;
   justify-content: center;
 }
+
+/* Conteneur principal du chat */
+.chatContainer {
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 500px;
+  background-color: #3A3A3A;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+/* Titre du chat */
+.chatContainer h2 {
+  margin-bottom: 1rem;
+}
+
+/* Liste des messages */
+.chatMessages {
+  max-height: 200px;
+  overflow-y: auto; /* Pour avoir une barre de scroll si le contenu dépasse 200px */
+  margin-bottom: 1rem;
+  background-color: #2C2C2C;
+  padding: 0.5rem;
+  border-radius: 5px;
+}
+
+
+/* Chaque message */
+.chatMessage {
+  margin-bottom: 0.5rem;
+}
+
+/* Conteneur de l'input et du bouton */
+.chatInputContainer {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Input du chat */
+.chatInputContainer input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #555;
+  background-color: #2C2C2C;
+  color: #F4F4F4;
+  border-radius: 5px;
+}
+
+/* Bouton envoyer */
+.chatInputContainer button {
+  background-color: #6A0DAD;
+  color: #F4F4F4;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.chatInputContainer button:hover {
+  background-color: #7B39E0;
+}

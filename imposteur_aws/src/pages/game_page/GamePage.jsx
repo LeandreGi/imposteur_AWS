@@ -34,6 +34,8 @@ const GamePage = () => {
   const [spokenWords, setSpokenWords] = useState([]);
   const [selectedVote, setSelectedVote] = useState(null);
   const [voteCounts, setVoteCounts] = useState({});
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatInput, setChatInput] = useState('');
 
   // Détermine si c'est à l'utilisateur de jouer
   const isMyTurn = players[currentPlayerIndex]?.id === userId;
@@ -81,14 +83,12 @@ const GamePage = () => {
     return () => socket.off('votesUpdate');
   }, []);
 
-  // const goToNextPlayer = () => {
-  //   setCurrentPlayerIndex((prevInde) => {
-  //     const nextIndex = (prevInde + 1) % players.length;
-  //     return nextIndex;
-  //   } );
-  //   // reinitialisation du chrono
-  //   setChrono(reflectionTime);
-  // };
+  useEffect(() => {
+    socket.on('chatMessage', ({ userId: senderId, pseudo, message }) => {
+      setChatMessages((prev) => [...prev, { senderId, pseudo, message }]);
+    });
+    return () => socket.off('chatMessage');
+  }, []);
 
   const handleSendWord = () => {
     if (!/^[a-zA-ZÀ-ÖØ-öø-ÿ]+$/u.test(inputWord.trim())) {
@@ -123,6 +123,17 @@ const GamePage = () => {
       setSelectedVote(null);
     } else {
       alert("Veuillez sélectionner un joueur à accuser.");
+    }
+  };
+
+  const handleSendChat = () => {
+    if (chatInput.trim() !== '') {
+      socket.emit('chatMessage', {
+        lobbyId,
+        userId,
+        message: chatInput.trim()
+      });
+      setChatInput('');
     }
   };
 
@@ -223,6 +234,28 @@ const GamePage = () => {
             )}
           </div>
         </section>
+      )}
+      {/* Chat */}
+      {currentPhase === 'VOTING' && (
+        <div className="chatContainer">
+          <h2>Chat</h2>
+          <div className="chatMessages">
+            {chatMessages.map((msg, index) => (
+              <div key={index} className="chatMessage">
+                <strong>{msg.pseudo} :</strong> {msg.message}
+              </div>
+            ))}
+          </div>
+          <div className="chatInputContainer">
+            <input
+              type="text"
+              placeholder="Tapez votre message..."
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+            />
+            <button onClick={handleSendChat}>Envoyer</button>
+          </div>
+        </div>
       )}
 
       {/* Boutons pour l'hôte */}
