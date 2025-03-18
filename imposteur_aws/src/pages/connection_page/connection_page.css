@@ -79,3 +79,9 @@ input {
     background-color: #2C2C2C;
     color: #F4F4F4;
 }
+
+.role_avatar {
+    width: 15vw;  
+    max-width: 120px;
+    height: auto;
+}

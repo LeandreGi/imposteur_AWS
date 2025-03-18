@@ -12,16 +12,19 @@ function RolesCarousel() {
             id: 1,
             title: 'Les civils',
             description: "Leur but est de découvrir leur propre identité et éliminer l'Imposteur et Mr White.",
+            image : '/assets/avatars/Civil.png', 
         },
         {
             id:2,
             title: 'Les imposteurs',
             description: "Leur but est de découvrir leur propre identité et survivre jusqu’à la fin.",
+            image : '/assets/avatars/Imposteur.png',
         },
         {
             id:3,
             title: 'Mr. White',
             description: "Son but est de survivre jusqu'à la fin ou de deviner le mot secret des civils.",
+            image : '/assets/avatars/MrWhite.png',
         },
     ];
 
@@ -47,6 +50,7 @@ function RolesCarousel() {
                 &gt;
             </button>
             <div className="roles_txt">
+                <img src={currentRole.image} alt={`Avatar ${currentRole.title}`} className="role_avatar" />
                 <h3>{currentRole.title}</h3>
                 <p>{currentRole.description}</p>
             </div>
