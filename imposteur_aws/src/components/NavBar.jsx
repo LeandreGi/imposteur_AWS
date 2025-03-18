@@ -20,18 +20,17 @@ const NavBar = () => {
   };
 
   const logoStyle = {
-    width: '80px',
+    width: '130px',
     height: 'auto',
     margin: '10px',
     cursor: 'pointer'
   };
 
-  // creer un logo et remplacer texte par <img src="/chemin/vers/logo.png" /> ?
   return (
     <nav style={navBarStyle}>
       <Link to="/">
         <img 
-          src="/assets/logo.png" 
+          src="/assets/logo/logo.png" 
           alt="Retour à l'accueil" 
           style={logoStyle}
         />
