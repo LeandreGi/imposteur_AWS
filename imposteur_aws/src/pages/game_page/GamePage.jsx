@@ -176,10 +176,15 @@ const GamePage = () => {
               value={inputWord}
               onChange={(e) => setInputWord(e.target.value)}
               className="wordInput"
+              disabled={!isMyTurn}
             />
-            <button onClick={handleSendWord} className="sendButton">
-              Envoyer
-            </button>
+            <button 
+            onClick={handleSendWord} 
+            className="sendButton"
+            disabled={!isMyTurn}
+          >
+            Envoyer
+          </button>
           </section>
 
           <section className="spokenWordsSection">
