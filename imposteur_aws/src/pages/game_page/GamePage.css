@@ -188,6 +188,10 @@
   cursor: pointer;
 }
 
+.voteButton.selected {
+  background-color: #7B39E0;   
+}
+
 /* Bouton global "valider" */
 .validateButton {
   margin-top: 20px;

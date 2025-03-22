@@ -37,6 +37,7 @@ const GamePage = () => {
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState('');
 
+
   // Détermine si c'est à l'utilisateur de jouer
   const isMyTurn = players[currentPlayerIndex]?.id === userId;
 
@@ -219,8 +220,8 @@ const GamePage = () => {
                 {/* On empêche de se voter soi-même */}
                 {player.id !== userId && !player.eliminated && (
                   <button
-                    className="voteButton"
-                    onClick={() => handleVoteClick(player.id)}
+                  className={`voteButton ${selectedVote === player.id ? 'selected' : ''}`}
+                  onClick={() => handleVoteClick(player.id)}
                   >
                     vote
                   </button>

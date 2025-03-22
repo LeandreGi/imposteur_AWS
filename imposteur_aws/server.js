@@ -85,10 +85,10 @@ function updateVotes(lobbyId) {
         eliminatedPlayer.eliminated = true;
     }
 
-    lobby.votes = {}; // Réinitialisation des votes
-
     // Calcul des scores
     let scores = calculateScores(lobby);
+
+    lobby.votes = {}; // Réinitialisation des votes
 
     // Vérification des conditions de fin de partie
     if (checkEndGameConditions(lobby)) {
