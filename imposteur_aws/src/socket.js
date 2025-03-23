@@ -1,5 +1,8 @@
 import { io } from 'socket.io-client';
 
-const socket = io(process.env.REACT_APP_BACKEND_URL || 'http://localhost:4000');  // URL dynamique
+const socket = io(process.env.REACT_APP_BACKEND_URL, {
+    transports: ['websocket', 'polling'], // Utiliser WebSocket d'abord
+    withCredentials: true,
+});
 
 export default socket;

@@ -6,11 +6,13 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: '*', // Permettre toutes les origines
+        origin: '*',
         methods: ['GET', 'POST'],
         allowedHeaders: ["my-custom-header"],
-        credentials: true
-    }
+        credentials: true,
+        transports: ['websocket', 'polling'],
+    },
+    allowEIO3: true,
 });
 
 
