@@ -6,8 +6,10 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: '*', // ça ça autorise tout le monde, donc tous les ports peuvent se connecter au backend, donc faudra régler ça plus tard
-        methods: ['GET', 'POST']
+        origin: '*', // Permettre toutes les origines
+        methods: ['GET', 'POST'],
+        allowedHeaders: ["my-custom-header"],
+        credentials: true
     }
 });
 
@@ -457,7 +459,7 @@ io.on('connection', (socket) => {
       
 });  
 
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
     console.log('Serveur démarré sur le port', PORT);
 });
