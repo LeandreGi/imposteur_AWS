@@ -118,19 +118,11 @@ const LobbyPage = () => {
                         onChange={(e) => setNumMrWhite(Number(e.target.value))}
                     />
                     <br />
-
-                    <label>
-                        <input
-                        type="checkbox"
-                        checked={randomDistribution}
-                        onChange={(e) => setRandomDistribution(e.target.checked)}
-                        />
-                        Répartition aléatoire des rôles ?
-                    </label>
+                    
                 </div>
             )}
 
-            <button onClick={handleStartGame} disabled={userId !== hostId}>
+            <button onClick={handleStartGame} disabled={userId !== hostId || players.length < 3}>
                 Démarrer la partie
             </button>
         </div>
