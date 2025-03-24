@@ -87,6 +87,12 @@ function updateVotes(lobbyId) {
     const eliminatedPlayer = lobby.players.find(p => p.id === eliminatedId);
     if (eliminatedPlayer) {
         eliminatedPlayer.eliminated = true;
+        if (eliminatedPlayer && eliminatedPlayer.role === 'mrWhite') {
+            lobby.currentPhase = 'MR_WHITE_GUESSING';
+            io.to(eliminatedPlayer.id).emit('mrWhiteGuessPrompt', {});
+            sendGameState(lobbyId);
+            return;
+        }
     }
 
     // Calcul des scores
@@ -379,7 +385,25 @@ io.on('connection', (socket) => {
         io.to(lobbyId).emit('startVotingPhase');
         sendGameState(lobbyId);
       });
+
+      /////////////////////////////
+      socket.on('mrWhiteGuess', ({ lobbyId, guess }) => {
+        const lobby = lobbies[lobbyId];
+        if (!lobby) return;
     
+        const mrWhitePlayer = lobby.players.find(p => p.id === socket.id);
+        if (!mrWhitePlayer || mrWhitePlayer.role !== 'mrWhite') return;
+        if (guess.toLowerCase() === lobby.gameConfig.wordCivil.toLowerCase()) {
+            io.to(lobbyId).emit('mrWhiteWon', { winnerId: mrWhitePlayer.id });
+            io.to(lobbyId).emit('gameEnded');
+        } else {
+            io.to(mrWhitePlayer.id).emit('mrWhiteGuessResult', { success: false });
+            lobby.currentPhase = 'WORD_TELLING';
+            sendGameState(lobbyId);
+            io.to(lobbyId).emit('updateTurn', { currentPlayerIndex: lobby.currentPlayerIndex });
+        }
+    });
+    /////////////////////////////
 
       socket.on('vote', ({ lobbyId, voterId, accusedId }) => {
         const lobby = lobbies[lobbyId];

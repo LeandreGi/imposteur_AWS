@@ -36,7 +36,8 @@ const GamePage = () => {
   const [voteCounts, setVoteCounts] = useState({});
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState('');
-
+  const [mrWhiteCanGuess, setMrWhiteCanGuess] = useState(false);
+  const [mrWhiteGuess, setMrWhiteGuess] = useState('');
 
   // Détermine si c'est à l'utilisateur de jouer
   const isMyTurn = players[currentPlayerIndex]?.id === userId;
@@ -148,6 +149,28 @@ const GamePage = () => {
     socket.emit('endGame', { lobbyId });
   };
 
+  useEffect(() => {
+    socket.on('mrWhiteGuessPrompt', () => {
+      if (myRole === 'mrWhite') {
+        setMrWhiteCanGuess(true);
+      }
+    });
+    socket.on('mrWhiteWon', ({ winnerId }) => {
+      if (winnerId === userId) {
+        alert("Bravo ! Vous avez deviné le mot et gagné la partie !");
+      } else {
+        alert("Mr White a deviné le mot !");
+      }
+    });
+  
+    socket.on('mrWhiteGuessResult', ({ success }) => {
+      if (!success) {
+        alert("Dommage, ce n'est pas le bon mot ! Le jeu reprend.");
+      }
+      setMrWhiteCanGuess(false);
+    });
+    
+  }, []);
 
   return (
     <div className="gameContainer">
@@ -155,121 +178,151 @@ const GamePage = () => {
         <h1>Partie en cours</h1>
       </header>
 
-      {/* Phase de mots */}
-      {currentPhase === 'WORD_TELLING' ? (
+      {/* Affichage du message global ou de la devinette */}
+      {currentPhase === 'MR_WHITE_GUESSING' ? (
         <>
-          <p>Famille : {familyName}</p>
-          <p>Mon rôle : {myRole}</p>
-          {myRole === 'mrWhite'
-            ? <p>Je suis Mr White, je n'ai pas de mot !</p>
-            : <p>Mon mot : {myWord}</p>
-          }
-
-          <section className="chronoSection">
-            <span className="chronoLabel">Temps restant : </span>
-            <span className="chronoValue">{chrono}s</span>
-          </section>
-
-          <section className="inputSection">
-            <input
-              type="text"
-              placeholder="Entrez votre mot ici..."
-              value={inputWord}
-              onChange={(e) => setInputWord(e.target.value)}
-              className="wordInput"
-              disabled={!isMyTurn}
-            />
-            <button 
-            onClick={handleSendWord} 
-            className="sendButton"
-            disabled={!isMyTurn}
-          >
-            Envoyer
-          </button>
-          </section>
-
-          <section className="spokenWordsSection">
-            <h2>Mots déjà dits :</h2>
-            {spokenWords.length > 0 ? (
-              <ul className="spokenWordsList">
-                {spokenWords.map((entry, index) => (
-                  <li key={index}>
-                    {entry.word} <span className="wordSender">- {entry.pseudo}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>Aucun mot n'a encore été dit.</p>
-            )}
-          </section>
+          {myRole === 'mrWhite' && me?.eliminated && mrWhiteCanGuess ? (
+            <div className="mrWhiteGuessSection">
+              <h2>Vous êtes éliminé ! Tentez de deviner le mot civil :</h2>
+              <input
+                type="text"
+                value={mrWhiteGuess}
+                onChange={(e) => setMrWhiteGuess(e.target.value)}
+                placeholder="Entrez votre proposition"
+              />
+              <button
+                onClick={() => {
+                  socket.emit('mrWhiteGuess', { lobbyId, guess: mrWhiteGuess });
+                  setMrWhiteGuess('');
+                }}
+              >
+                Tenter ma chance
+              </button>
+            </div>
+          ) : (
+            <div className="globalMessage">
+              <p>Mr White tente de deviner le mot...</p>
+            </div>
+          )}
         </>
       ) : (
-        // Phase de votes
-        <section className="votingSection">
-          <h1 className="votingTitle">VOTES</h1>
+        <>
+          {/* Phase de mots */}
+          {currentPhase === 'WORD_TELLING' && (
+            <>
+              <p>Famille : {familyName}</p>
+              <p>Mon rôle : {myRole}</p>
+              {myRole === 'mrWhite'
+                ? <p>Je suis Mr White, je n'ai pas de mot !</p>
+                : <p>Mon mot : {myWord}</p>
+              }
 
-          <div className="playersVotes">
-            {players.map((player) => (
-              <div key={player.id} className="playerColumn">
-                <h2>{player.pseudo}</h2>
+              <section className="chronoSection">
+                <span className="chronoLabel">Temps restant : </span>
+                <span className="chronoValue">{chrono}s</span>
+              </section>
 
-                <div className="voteIndicators">
-                  <p>Votes reçus : {voteCounts[player.id] || 0}</p>
-                </div>
+              <section className="inputSection">
+                <input
+                  type="text"
+                  placeholder="Entrez votre mot ici..."
+                  value={inputWord}
+                  onChange={(e) => setInputWord(e.target.value)}
+                  className="wordInput"
+                  disabled={!isMyTurn}
+                />
+                <button 
+                  onClick={handleSendWord} 
+                  className="sendButton"
+                  disabled={!isMyTurn}
+                >
+                  Envoyer
+                </button>
+              </section>
 
-                {/* On empêche de se voter soi-même */}
-                {player.id !== userId && !player.eliminated && (
-                  <button
-                  className={`voteButton ${selectedVote === player.id ? 'selected' : ''}`}
-                  onClick={() => handleVoteClick(player.id)}
-                  >
-                    vote
+              <section className="spokenWordsSection">
+                <h2>Mots déjà dits :</h2>
+                {spokenWords.length > 0 ? (
+                  <ul className="spokenWordsList">
+                    {spokenWords.map((entry, index) => (
+                      <li key={index}>
+                        {entry.word} <span className="wordSender">- {entry.pseudo}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>Aucun mot n'a encore été dit.</p>
+                )}
+              </section>
+            </>
+          )}
+
+          {/* Phase de votes */}
+          {currentPhase === 'VOTING' && (
+            <section className="votingSection">
+              <h1 className="votingTitle">VOTES</h1>
+              <div className="playersVotes">
+                {players.map((player) => (
+                  <div key={player.id} className="playerColumn">
+                    <h2>{player.pseudo}</h2>
+                    <div className="voteIndicators">
+                      <p>Votes reçus : {voteCounts[player.id] || 0}</p>
+                    </div>
+                    {player.id !== userId && !player.eliminated && (
+                      <button
+                        className={`voteButton ${selectedVote === player.id ? 'selected' : ''}`}
+                        onClick={() => handleVoteClick(player.id)}
+                      >
+                        vote
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className='voting_button_section'>
+                <button className="validateButton" onClick={handleVote}>
+                  valider
+                </button>
+                {userId === hostId && (
+                  <button onClick={endGame} className="endGameButton">
+                    Fin de la partie : Voir le score
                   </button>
                 )}
               </div>
-            ))}
-          </div>
-          <div className='voting_button_section'>
-            <button className="validateButton" onClick={handleVote}>
-              valider
-            </button>
-            {userId === hostId && (
-              <button onClick={endGame} className="endGameButton">
-                Fin de la partie : Voir le score
-              </button>
-            )}
-          </div>
-        </section>
-      )}
-      {/* Chat */}
-      {currentPhase === 'VOTING' && (
-        <div className="chatContainer">
-          <h2>Chat</h2>
-          <div className="chatMessages">
-            {chatMessages.map((msg, index) => (
-              <div key={index} className="chatMessage">
-                <strong>{msg.pseudo} :</strong> {msg.message}
+            </section>
+          )}
+
+          {/* Chat : affiché uniquement si on n'est pas en phase de devinette */}
+          {currentPhase === 'VOTING' && (
+            <div className="chatContainer">
+              <h2>Chat</h2>
+              <div className="chatMessages">
+                {chatMessages.map((msg, index) => (
+                  <div key={index} className="chatMessage">
+                    <strong>{msg.pseudo} :</strong> {msg.message}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <div className="chatInputContainer">
-            <input
-              type="text"
-              placeholder="Tapez votre message..."
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-            />
-            <button onClick={handleSendChat}>Envoyer</button>
-          </div>
-        </div>
+              <div className="chatInputContainer">
+                <input
+                  type="text"
+                  placeholder="Tapez votre message..."
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                />
+                <button onClick={handleSendChat}>Envoyer</button>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {/* Boutons pour l'hôte */}
       {userId === hostId && currentPhase === 'WORD_TELLING' && (
-            <button onClick={startVotingPhase} className="endGameButton">
-              Lancement de la phase de vote
-            </button>
-          )}
+        <button onClick={startVotingPhase} className="endGameButton">
+          Lancement de la phase de vote
+        </button>
+      )}
     </div>
   );
 };
