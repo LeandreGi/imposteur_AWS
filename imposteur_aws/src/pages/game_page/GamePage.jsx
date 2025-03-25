@@ -282,6 +282,7 @@ useEffect(() => {
                       <button
                         className={`voteButton ${selectedVote === player.id ? 'selected' : ''}`}
                         onClick={() => handleVoteClick(player.id)}
+                        disabled={me.eliminated == true}
                       >
                         vote
                       </button>
@@ -290,7 +291,7 @@ useEffect(() => {
                 ))}
               </div>
               <div className='voting_button_section'>
-                <button className="validateButton" onClick={handleVote}>
+                <button className="validateButton" onClick={handleVote} disabled={me.eliminated == true}>
                   valider
                 </button>
                 {userId === hostId && (
