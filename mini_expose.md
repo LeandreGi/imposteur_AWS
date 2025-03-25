@@ -28,10 +28,18 @@
 
 - React Router : Gérer la navigation entre différentes pages (lobby, salle d’attente, page de jeu, page d’erreur).
 
+### Virtual DOM
+
+React utilise un système de Virtual DOM qui quand on change de page ou qu'on met la page à jour ne change que ce qui a besoin d'être changé sur la page, ce qui améliore les performances etc.
+
 ## Pourquoi pour notre projet ?
 
 Très populaire donc très utilisée donc bcp de doc et de gens qui font des vidéos/des forums etc...
 
-Intéressant pour la gestion des pages etc, pour la réutilisation de composants par exemple pour faire des headers réutilisables etc.
+Intéressant pour la gestion des pages etc, pour la réutilisation de composants par exemple pour faire des headers/des boutons/des cartes de joueurs réutilisables etc.
 React nous a permis d'avoir une architecture dès le début et de travailler de façon organisée avec des pages de manière logique.
 A permis de faire de l'affichage de façon dynamique grâce au langage Javascript.
+
+Etant donné qu'il y a plusieurs interractions un peu tout le temps au cours du jeu, on a opté pour React parce que du coup l'affichage est fluide, dynamique etc
+
+Facile d'intégrer Socket.IO
