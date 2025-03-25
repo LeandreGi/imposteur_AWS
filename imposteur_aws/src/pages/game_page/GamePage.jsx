@@ -149,30 +149,38 @@ const GamePage = () => {
     socket.emit('endGame', { lobbyId });
   };
 
-  useEffect(() => {
+useEffect(() => {
+  const handleMrWhiteGuessPrompt = () => {
+    if (myRole === 'mrWhite') {
+      setMrWhiteCanGuess(true);
+    }
+  };
 
-    socket.on('mrWhiteGuessPrompt', () => {
-      if (myRole === 'mrWhite') {
-        setMrWhiteCanGuess(true);
-      }
-    });
+  const handleMrWhiteWon = ({ winnerId }) => {
+    if (winnerId === userId) {
+      alert("Bravo ! Vous avez deviné le mot et gagné la partie !");
+    } else {
+      alert("Mr White a deviné le mot !");
+    }
+  };
 
-    socket.on('mrWhiteWon', ({ winnerId }) => {
-      if (winnerId === userId) {
-        alert("Bravo ! Vous avez deviné le mot et gagné la partie !");
-      } else {
-        alert("Mr White a deviné le mot !");
-      }
-    });
-  
-    socket.on('mrWhiteGuessResult', ({ success }) => {
-      if (!success) {
-        alert("Dommage, ce n'est pas le bon mot ! Le jeu reprend.");        
-      }
-      setMrWhiteCanGuess(false);
-    });
-    
-  }, []);
+  const handleMrWhiteGuessResult = ({ success }) => {
+    if (!success) {
+      alert("Dommage, ce n'est pas le bon mot ! Le jeu reprend.");
+    }
+    setMrWhiteCanGuess(false);
+  };
+
+  socket.on('mrWhiteGuessPrompt', handleMrWhiteGuessPrompt);
+  socket.on('mrWhiteWon', handleMrWhiteWon);
+  socket.on('mrWhiteGuessResult', handleMrWhiteGuessResult);
+
+  return () => {
+    socket.off('mrWhiteGuessPrompt', handleMrWhiteGuessPrompt);
+    socket.off('mrWhiteWon', handleMrWhiteWon);
+    socket.off('mrWhiteGuessResult', handleMrWhiteGuessResult);
+  };
+}, [myRole, userId]);
 
   return (
     <div className="gameContainer">
