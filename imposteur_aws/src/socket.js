@@ -1,6 +1,8 @@
 import { io } from 'socket.io-client';
 
-const socket = io('https://imposteur-aws.onrender.com', {
+console.log("URL du backend dans socket.js :", process.env.REACT_APP_BACKEND_URL);
+
+const socket = io(process.env.REACT_APP_BACKEND_URL, {
     transports: ['websocket', 'polling'],
     withCredentials: true,
 });
