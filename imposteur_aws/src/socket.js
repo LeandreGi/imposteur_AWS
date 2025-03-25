@@ -1,7 +1,8 @@
 import { io } from 'socket.io-client';
 
-const socket = io(process.env.REACT_APP_BACKEND_URL, {
-    transports: ['websocket', 'polling'], // Utiliser WebSocket d'abord
+console.log("URL du backend : ", process.env.REACT_APP_BACKEND_URL);
+const socket = io(process.env.REACT_APP_BACKEND_URL || 'https://imposteur-aws.onrender.com', {
+    transports: ['websocket', 'polling'],
     withCredentials: true,
 });
 
