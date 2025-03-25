@@ -12,3 +12,26 @@
 - Facile à implémenter avec React et Socket.IO : Il y a bcp de docs sur internet qui utilisent React avec Node.js et Socket.io donc le choix paraissait évident.
 
 - permet d'intégrer rapidement des librairies genre express
+
+# React
+
+## Fonctionnement global
+
+### Hooks et composants 
+
+- useState : Gérer l’état local d’un composant (ex. stocker l’état d’un joueur, un compteur de points, etc.).
+
+- useEffect : Gérer les effets de bord et le cycle de vie (ex. effectuer une requête au moment du montage du composant).
+
+- useContext (ou Redux) : Partager un état global (ex. liste des joueurs connectés, état de la partie) entre plusieurs composants.
+- Découpage des composants : Séparer la logique (ex. composant “Lobby”, composant “Game”, composant “Login”).
+
+- React Router : Gérer la navigation entre différentes pages (lobby, salle d’attente, page de jeu, page d’erreur).
+
+## Pourquoi pour notre projet ?
+
+Très populaire donc très utilisée donc bcp de doc et de gens qui font des vidéos/des forums etc...
+
+Intéressant pour la gestion des pages etc, pour la réutilisation de composants par exemple pour faire des headers réutilisables etc.
+React nous a permis d'avoir une architecture dès le début et de travailler de façon organisée avec des pages de manière logique.
+A permis de faire de l'affichage de façon dynamique grâce au langage Javascript.
