@@ -124,27 +124,33 @@ function updateVotes(lobbyId) {
 
 function calculateScores(lobby) {
     let scores = {};
-    let impostor = lobby.players.find(p => p.role === 'imposteur');
-
+  
+    let badGuys = lobby.players.filter(
+      p => p.role === 'imposteur' || p.role === 'mrWhite'
+    );
+  
     lobby.players.forEach(player => {
-        scores[player.id] = 0;
+      scores[player.id] = 0;
     });
-
-    if (impostor) {
-        lobby.players.forEach(player => {
-            if (player.role === 'civil') {
-                if (lobby.votes[player.id] === impostor.id) {
-                    scores[player.id] += 100;
-                } else {
-                    scores[impostor.id] += 100; // L'imposteur gagne 100 points si un civil ne vote pas contre lui
-                }
-            }
-        });
+  
+    if (badGuys.length > 0) {
+      lobby.players.forEach(player => {
+        if (player.role === 'civil') {
+          const accusedId = lobby.votes[player.id];
+          if (accusedId && badGuys.some(bg => bg.id === accusedId)) {
+            scores[player.id] += 100;
+          } else {
+            badGuys.forEach(bg => {
+              scores[bg.id] += 100;
+            });
+          }
+        }
+      });
     }
-    console.log(scores)
-
+  
+    console.log(scores);
     return scores;
-}
+  }
 
 
 function checkEndGameConditions(lobby) {
