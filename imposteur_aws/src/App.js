@@ -2,11 +2,17 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import './App.css';
+import { useEffect } from 'react';
 
 import HomePage from './pages/connection_page/connection_page';
 import LobbyPage from './pages/lobby_page/LobbyPage';
 import GamePage from './pages/game_page/GamePage';
 import ScorePage from './pages/score_page/ScorePage';
+
+useEffect(() => {
+  console.log("Backend URL :", process.env.REACT_APP_BACKEND_URL);
+}, []);
+
 
 function App() {
   return (
