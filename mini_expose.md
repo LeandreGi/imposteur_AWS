@@ -21,8 +21,6 @@
 
 - useState : Gérer l’état local d’un composant (ex. stocker l’état d’un joueur, un compteur de points, etc.).
 
-- useEffect : Gérer les effets de bord et le cycle de vie (ex. effectuer une requête au moment du montage du composant).
-
 - useContext (ou Redux) : Partager un état global (ex. liste des joueurs connectés, état de la partie) entre plusieurs composants.
 - Découpage des composants : Séparer la logique (ex. composant “Lobby”, composant “Game”, composant “Login”).
 
@@ -43,3 +41,33 @@ A permis de faire de l'affichage de façon dynamique grâce au langage Javascrip
 Etant donné qu'il y a plusieurs interractions un peu tout le temps au cours du jeu, on a opté pour React parce que du coup l'affichage est fluide, dynamique etc
 
 Facile d'intégrer Socket.IO
+
+# Hébergement 
+
+## Frontend
+
+### Vercel
+
+**Pourquoi ?**
+
+- Adaptés aux projets faits en React ou d'autres frameworks du type
+- Facilité de déploiement : Intégrations directe avec GitHub, un simple push déclenche un redéploiement automatique de l'app
+- On peut stocker des variables d'environnement : exemple, l'URL pour le backend
+  
+**Inconvénients**
+
+- Si le backend est hébergé ailleurs (comme sur Render), il peut y avoir une légère latence due aux échanges entre les serveurs.
+  
+## Backend
+### Render 
+
+**Pourquoi Render ?**
+
+- gratuit
+- support adaptés pour les app Node.js avec WebSockets
+- Fonctionne aussi avec GitHub de manière automatique
+- idéal pour des projets à petite échelle
+
+**Inconvénients** 
+
+- étant donné qu'on utilise la version gratuite, il peut y avoir du délai de plusieurs minutes si les services n'ont pas été utilisés depuis un moment
