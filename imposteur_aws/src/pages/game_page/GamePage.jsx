@@ -149,28 +149,38 @@ const GamePage = () => {
     socket.emit('endGame', { lobbyId });
   };
 
-  useEffect(() => {
-    socket.on('mrWhiteGuessPrompt', () => {
-      if (myRole === 'mrWhite') {
-        setMrWhiteCanGuess(true);
-      }
-    });
-    socket.on('mrWhiteWon', ({ winnerId }) => {
-      if (winnerId === userId) {
-        alert("Bravo ! Vous avez deviné le mot et gagné la partie !");
-      } else {
-        alert("Mr White a deviné le mot !");
-      }
-    });
-  
-    socket.on('mrWhiteGuessResult', ({ success }) => {
-      if (!success) {
-        alert("Dommage, ce n'est pas le bon mot ! Le jeu reprend.");
-      }
-      setMrWhiteCanGuess(false);
-    });
-    
-  }, []);
+useEffect(() => {
+  const handleMrWhiteGuessPrompt = () => {
+    if (myRole === 'mrWhite') {
+      setMrWhiteCanGuess(true);
+    }
+  };
+
+  const handleMrWhiteWon = ({ winnerId }) => {
+    if (winnerId === userId) {
+      alert("Bravo ! Vous avez deviné le mot et gagné la partie !");
+    } else {
+      alert("Mr White a deviné le mot !");
+    }
+  };
+
+  const handleMrWhiteGuessResult = ({ success }) => {
+    if (!success) {
+      alert("Dommage, ce n'est pas le bon mot ! Le jeu reprend.");
+    }
+    setMrWhiteCanGuess(false);
+  };
+
+  socket.on('mrWhiteGuessPrompt', handleMrWhiteGuessPrompt);
+  socket.on('mrWhiteWon', handleMrWhiteWon);
+  socket.on('mrWhiteGuessResult', handleMrWhiteGuessResult);
+
+  return () => {
+    socket.off('mrWhiteGuessPrompt', handleMrWhiteGuessPrompt);
+    socket.off('mrWhiteWon', handleMrWhiteWon);
+    socket.off('mrWhiteGuessResult', handleMrWhiteGuessResult);
+  };
+}, [myRole, userId]);
 
   return (
     <div className="gameContainer">
@@ -210,8 +220,6 @@ const GamePage = () => {
           {/* Phase de mots */}
           {currentPhase === 'WORD_TELLING' && (
             <>
-              <p>Famille : {familyName}</p>
-              <p>Mon rôle : {myRole}</p>
               {myRole === 'mrWhite'
                 ? <p>Je suis Mr White, je n'ai pas de mot !</p>
                 : <p>Mon mot : {myWord}</p>
@@ -272,6 +280,7 @@ const GamePage = () => {
                       <button
                         className={`voteButton ${selectedVote === player.id ? 'selected' : ''}`}
                         onClick={() => handleVoteClick(player.id)}
+                        disabled={me.eliminated == true}
                       >
                         vote
                       </button>
@@ -280,7 +289,7 @@ const GamePage = () => {
                 ))}
               </div>
               <div className='voting_button_section'>
-                <button className="validateButton" onClick={handleVote}>
+                <button className="validateButton" onClick={handleVote} disabled={me.eliminated == true}>
                   valider
                 </button>
                 {userId === hostId && (
