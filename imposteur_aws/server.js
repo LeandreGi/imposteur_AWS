@@ -396,14 +396,28 @@ io.on('connection', (socket) => {
     
         const mrWhitePlayer = lobby.players.find(p => p.id === socket.id);
         if (!mrWhitePlayer || mrWhitePlayer.role !== 'mrWhite') return;
+
         if (guess.toLowerCase() === lobby.gameConfig.wordCivil.toLowerCase()) {
             io.to(lobbyId).emit('mrWhiteWon', { winnerId: mrWhitePlayer.id });
             io.to(lobbyId).emit('gameEnded');
         } else {
             io.to(mrWhitePlayer.id).emit('mrWhiteGuessResult', { success: false });
-            lobby.currentPhase = 'WORD_TELLING';
-            sendGameState(lobbyId);
-            io.to(lobbyId).emit('updateTurn', { currentPlayerIndex: lobby.currentPlayerIndex });
+            // Calcul des scores
+            let scores = calculateScores(lobby);
+            lobby.votes = {}; // Réinitialisation des votes
+            // Vérification des conditions de fin de partie
+            if (checkEndGameConditions(lobby)) {
+                io.to(lobbyId).emit('gameEnded', { scores, impostor: lobby.players.find(p => p.role === 'imposteur') });
+            } else {
+                lobby.currentPhase = 'WORD_TELLING';
+                if (lobby.players[lobby.currentPlayerIndex].eliminated) {
+                    do {
+                        lobby.currentPlayerIndex = (lobby.currentPlayerIndex + 1) % lobby.players.length;
+                    } while (lobby.players[lobby.currentPlayerIndex].eliminated);
+                }
+                sendGameState(lobbyId);
+                io.to(lobbyId).emit('updateTurn', { currentPlayerIndex: lobby.currentPlayerIndex });
+            }
         }
     });
     /////////////////////////////

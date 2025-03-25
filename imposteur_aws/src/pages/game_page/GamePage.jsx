@@ -150,11 +150,13 @@ const GamePage = () => {
   };
 
   useEffect(() => {
+
     socket.on('mrWhiteGuessPrompt', () => {
       if (myRole === 'mrWhite') {
         setMrWhiteCanGuess(true);
       }
     });
+
     socket.on('mrWhiteWon', ({ winnerId }) => {
       if (winnerId === userId) {
         alert("Bravo ! Vous avez deviné le mot et gagné la partie !");
@@ -165,7 +167,7 @@ const GamePage = () => {
   
     socket.on('mrWhiteGuessResult', ({ success }) => {
       if (!success) {
-        alert("Dommage, ce n'est pas le bon mot ! Le jeu reprend.");
+        alert("Dommage, ce n'est pas le bon mot ! Le jeu reprend.");        
       }
       setMrWhiteCanGuess(false);
     });

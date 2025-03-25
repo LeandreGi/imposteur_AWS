@@ -76,9 +76,18 @@ export const GameProvider = ({ children }) => {
         });
 
         socket.on('gameEnded', (data) => {
-            setScores(data.scores);
-            setImpostor(data.impostor);
-        });        
+            if (data && data.scores) {
+              setScores(data.scores);
+              setImpostor(data.impostor);
+            } else {
+              const initialScores = {};
+              players.forEach(player => {
+                initialScores[player.id] = 0;
+              });
+              setScores(initialScores);
+              setImpostor(null);
+            }
+          });    
 
         // nettoyage du listener socket
         return () => {
