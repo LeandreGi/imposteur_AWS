@@ -6,7 +6,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: '*',
+        origin: ['https://imposteur-aws.vercel.app', 'https://imposteur-aws.onrender.com'],
         methods: ['GET', 'POST'],
         allowedHeaders: ["my-custom-header"],
         credentials: true,
