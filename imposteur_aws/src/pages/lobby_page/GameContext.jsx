@@ -76,17 +76,17 @@ export const GameProvider = ({ children }) => {
         });
 
         socket.on('gameEnded', (data) => {
-            if (data && data.scores) {
+            // if (data && data.scores) {
               setScores(data.scores);
               setImpostor(data.impostor);
-            } else {
-              const initialScores = {};
-              players.forEach(player => {
-                initialScores[player.id] = 0;
-              });
-              setScores(initialScores);
-              setImpostor(null);
-            }
+            // // } else {
+            //   const initialScores = {};
+            //   players.forEach(player => {
+            //     initialScores[player.id] = 0;
+            //   });
+            //   setScores(initialScores);
+            //   setImpostor(null);
+            // }
           });    
 
         // nettoyage du listener socket
