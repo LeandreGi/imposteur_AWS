@@ -220,8 +220,6 @@ useEffect(() => {
           {/* Phase de mots */}
           {currentPhase === 'WORD_TELLING' && (
             <>
-              <p>Famille : {familyName}</p>
-              <p>Mon rôle : {myRole}</p>
               {myRole === 'mrWhite'
                 ? <p>Je suis Mr White, je n'ai pas de mot !</p>
                 : <p>Mon mot : {myWord}</p>
