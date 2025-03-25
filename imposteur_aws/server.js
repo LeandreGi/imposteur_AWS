@@ -15,6 +15,9 @@ const io = socketIo(server, {
     allowEIO3: true,
 });
 
+app.get('/', (req, res) => {
+    res.send("Le serveur est en ligne !");
+  });
 
 const animaux = require('./src/Data/Animaux.json');
 const couleurs = require('./src/Data/Couleurs.json');
