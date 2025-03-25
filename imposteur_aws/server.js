@@ -10,7 +10,7 @@ const io = socketIo(server, {
         methods: ['GET', 'POST'],
         allowedHeaders: ["my-custom-header"],
         credentials: true,
-        transports: ['websocket', 'polling'],
+        transports: ['websocket'],
     },
     allowEIO3: true,
 });
