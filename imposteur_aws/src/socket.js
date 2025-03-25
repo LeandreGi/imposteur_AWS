@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client';
 
 const socket = io('https://imposteur-aws.onrender.com', {
-    transports: ['websocket'],
+    transports: ['websocket', 'polling'],
     withCredentials: true,
 });
 
